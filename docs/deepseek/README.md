@@ -9,7 +9,9 @@
 3. [Referência REST: endpoints, payloads e respostas](03-referencia-rest.md)
 4. [Recursos avançados: thinking, visão, JSON, streaming e arquivos](04-recursos-avancados.md)
 5. [Multiagentes, Tool Calling, RAG, MCP e segurança](05-multiagentes-mcp.md)
-6. [Fontes oficiais, atualização e regras de uso](06-fontes-e-manutencao.md)
+6. [Protocolo Anthropic: SDK, mensagens e limitações](07-protocolo-anthropic.md)
+7. [Produção, diagnóstico, erros e controle de custos](08-producao-e-troubleshooting.md)
+8. [Fontes oficiais, atualização e regras de uso](06-fontes-e-manutencao.md)
 
 ## Exemplos por linguagem
 
