@@ -1,6 +1,6 @@
 # MultAgent
 
-Plataforma multiagente em planejamento, com suporte arquitetural para **DeepSeek**, **Grok/xAI** e um modo **híbrido** que distribui tarefas conforme custo, recursos, privacidade e qualidade.
+Plataforma multiagente open-source em planejamento, com **duas edições independentes**: Desktop com janela gráfica PySide6/Qt e Server headless com API FastAPI + painel web React. Ambas compartilham o motor Python e os provedores **DeepSeek**, **Grok/xAI** ou **ambos**.
 
 ## Documentação
 
@@ -15,10 +15,11 @@ Este é o **ponto de entrada da documentação**: apresenta os conceitos de IA/L
 | API do Grok/xAI, custos e ferramentas | [01 · Grok](org/01-provedores/grok/README.md) |
 | DeepSeek Only, Grok Only e Hybrid | [02 · Arquiteturas](org/02-arquiteturas/README.md) |
 | Como estudar e implementar | [03 · Trilhas](org/03-trilhas/README.md) |
-| Instalação pelo terminal, execução local, open-source e releases | [04 · Distribuição e governança](org/04-distribuicao/README.md) |
+| Desktop nativo, Server, instalação e releases | [04 · Distribuição e governança](org/04-distribuicao/README.md) |
+| Diferença entre os executáveis Desktop e Server | [Edições Desktop/Server](org/04-distribuicao/04-edicoes-desktop-server.md) |
 | Comparativo dos provedores | [Por que DeepSeek e Grok?](org/00-fundamentos/03-por-que-deepseek-e-grok.md) |
 
-> **Diretriz de distribuição:** aplicação gratuita para instalação local, com Python + FastAPI + React/TypeScript + SQLite, sem Tauri obrigatório. A CLI planejada será `multagent start`; **ainda não existe instalador ou comando executável publicado**. [Leia o desenho de instalação](org/04-distribuicao/01-instalacao-cli.md) e a [política de contribuição/licença](org/04-distribuicao/02-licenca-e-contribuicoes.md).
+> **Diretriz de distribuição:** Windows 10/11 e Ubuntu/Debian Desktop usam um **executável nativo PySide6** que abre uma janela **sem web, navegador ou porta HTTP** (`multagent`). Uma edição **Server separada** roda em Windows/Linux Server sem GUI e, após configurar a porta, serve a interface React pela API FastAPI (`multagent-server`). Ambos serão instalados por script do GitHub; **ainda não há binários ou scripts executáveis publicados**. [Detalhes](org/04-distribuicao/04-edicoes-desktop-server.md) · [Instalação](org/04-distribuicao/01-instalacao-cli.md) · [Governança](org/04-distribuicao/02-licenca-e-contribuicoes.md).
 
 **A documentação técnica reside em `org/`**, organizada hierarquicamente, com retorno ao mapa mestre em todas as páginas.
 
