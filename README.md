@@ -15,7 +15,10 @@ Este é o **ponto de entrada da documentação**: apresenta os conceitos de IA/L
 | API do Grok/xAI, custos e ferramentas | [01 · Grok](org/01-provedores/grok/README.md) |
 | DeepSeek Only, Grok Only e Hybrid | [02 · Arquiteturas](org/02-arquiteturas/README.md) |
 | Como estudar e implementar | [03 · Trilhas](org/03-trilhas/README.md) |
+| Instalação pelo terminal, execução local, open-source e releases | [04 · Distribuição e governança](org/04-distribuicao/README.md) |
 | Comparativo dos provedores | [Por que DeepSeek e Grok?](org/00-fundamentos/03-por-que-deepseek-e-grok.md) |
+
+> **Diretriz de distribuição:** aplicação gratuita para instalação local, com Python + FastAPI + React/TypeScript + SQLite, sem Tauri obrigatório. A CLI planejada será `multagent start`; **ainda não existe instalador ou comando executável publicado**. [Leia o desenho de instalação](org/04-distribuicao/01-instalacao-cli.md) e a [política de contribuição/licença](org/04-distribuicao/02-licenca-e-contribuicoes.md).
 
 **A documentação técnica reside em `org/`**, organizada hierarquicamente, com retorno ao mapa mestre em todas as páginas.
 
