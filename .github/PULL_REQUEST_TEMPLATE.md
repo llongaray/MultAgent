@@ -4,6 +4,7 @@
 - Prioridade: **P0 / P1 / P2 / P3 / P4 / P5 / P6 / P7 / P8 / P9**
 - Módulo: `src/multagent/...` / `frontend-server/...` / documentação / infraestrutura
 - Tipo: feat / fix / docs / test / build / security
+- Branch de destino: `dev` / `hml` / `main` (somente depois de autorização para main)
 - Dependências (issues ou PRs):
 
 ## Objetivo e escopo
@@ -39,4 +40,4 @@ Componentes, interfaces e comportamento alterados.
 - [ ] Rollback/migração documentados, quando aplicável
 - [ ] Escopo restrito ao módulo e prioridade identificados
 
-> Abrir PR não implica merge. Aguardar revisão e verificações requeridas.
+> Fluxo obrigatório: `feature → dev → hml (revisão do proprietário) → main (apenas após aprovação explícita)`. Abrir PR não implica merge, e merge na `main` sem autorização do proprietário é proibido.
