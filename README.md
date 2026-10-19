@@ -16,6 +16,7 @@ Este é o **ponto de entrada da documentação**: apresenta os conceitos de IA/L
 | API do Grok/xAI, custos e ferramentas | [01 · Grok](org/01-provedores/grok/README.md) |
 | DeepSeek Only, Grok Only e Hybrid | [02 · Arquiteturas](org/02-arquiteturas/README.md) |
 | Como estudar e implementar | [03 · Trilhas](org/03-trilhas/README.md) |
+| Prioridades P0, P1, P2... e PR obrigatório por módulo | [Guia de prioridades](org/06-desenvolvimento/05-fluxo-de-prs-e-prioridades.md) · [CONTRIBUTING](CONTRIBUTING.md) |
 | Estrutura real das pastas e documentação dos módulos | [06 · Desenvolvimento](org/06-desenvolvimento/README.md) · [Mapa físico](org/06-desenvolvimento/01-mapa-de-pastas.md) |
 | Desktop nativo, Server, instalação e releases | [04 · Distribuição e governança](org/04-distribuicao/README.md) |
 | Diferença entre os executáveis Desktop e Server | [Edições Desktop/Server](org/04-distribuicao/04-edicoes-desktop-server.md) |
