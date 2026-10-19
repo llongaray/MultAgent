@@ -24,7 +24,7 @@ Fontes oficiais:
 ## Regra do projeto oficial (independente da licença)
 
 1. Todas as alterações **incorporadas ao MultAgent oficial** devem gerar commit público com autor, mensagem e diff.
-2. Alterações propostas entram por Pull Request, vinculadas a issue/descritivo de mudança.
+2. Alterações propostas entram por Pull Request, vinculadas a issue/descritivo de mudança. **Cada módulo de código será criado/alterado por PR próprio**, identificado por prioridade `P0`, `P1`, `P2` etc., segundo o [guia oficial de implementação](../06-desenvolvimento/05-fluxo-de-prs-e-prioridades.md) e o [CONTRIBUTING](../../CONTRIBUTING.md).
 3. CI valida formatação, lint, testes, segurança, documentação e pacotes.
 4. Pelo menos um revisor autorizado aprova antes do merge; branch `main` protegida contra push direto/force-push quando configurável.
 5. Mudanças que alterem API/configuração ou CLI exigem atualização do `org/README.md`, dos manuais e de notas de versão.
