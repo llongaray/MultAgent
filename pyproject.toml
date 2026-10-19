@@ -22,12 +22,16 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=8,<10",
-    "ruff>=0.8,<1",
-    "mypy>=1.10,<2",
-    "build>=1,<2",
-]
+providers = ["httpx>=0.27,<1"]
+vault = ["keyring>=25,<27", "cryptography>=43,<47"]
+desktop = ["PySide6>=6.8,<7", "keyring>=25,<27", "cryptography>=43,<47", "httpx>=0.27,<1"]
+dev = ["pytest>=8,<10", "ruff>=0.8,<1", "mypy>=1.10,<2", "build>=1,<2", "cryptography>=43,<47", "httpx>=0.27,<1"]
+
+[project.gui-scripts]
+multagent = "multagent.desktop.main:main"
+
+[project.scripts]
+multagent-cli = "multagent.desktop.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
