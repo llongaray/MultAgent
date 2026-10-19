@@ -1,23 +1,7 @@
-# Automação de aplicativos
+# P9-01 — automação controlada por acessibilidade
 
-> [← Mapa Mestre](../../../../org/README.md) · [↑ Pasta pai](../README.md) · [Guia de desenvolvimento](../../../../org/06-desenvolvimento/README.md)
+Implementados: inventário de janelas, seleção de janela por identidade PID+handle/índice, grants por workspace e agente, expiração implícita ao mudar o alvo, aprovação humana a cada ação, auditoria no SQLite. API `DesktopAutomation` e adaptadores opcionais `WindowsUIABackend` (pywinauto/UI Automation) e `LinuxATSPIBackend` (pyatspi/AT-SPI).
 
-**Status:** documentação de pasta reservada; nenhuma implementação executável.
+**Limite de segurança:** somente invocação de botão acessível nomeado; sem teclado livre, atalhos globais, screenshots, campos de senha, injeção física de mouse/teclado ou controle elevado. Nenhuma automação roda sem interface gráfica e permissões de acessibilidade. No Linux, a disponibilidade depende do aplicativo expor AT-SPI em X11/Wayland; essa API não contorna limitações do compositor.
 
-## Propósito
-
-Automatizar apps do Desktop por API/acessibilidade.
-
-## Contratos e componentes planejados
-
-Windows UI Automation e Linux AT-SPI/Wayland/X11.
-
-## Limites e segurança
-
-App/janela autorizados e sessão gráfica presente.
-
-## Testes e aceite
-
-Testes em apps controlados sem escapar.
-
-**Roteiro:** [Missão](../../../../org/00-fundamentos/05-proposito-e-casos-de-uso.md) · [Marcos de implementação](../../../../org/05-integracoes/05-caminho-de-implementacao.md).
+**Testes:** mocks de seleção, mudança de janela, grants, consentimento e auditoria. Testes manuais contra aplicativos gráficos reais ainda são necessários nas duas plataformas. Não declarar conformidade E2E apenas com CI headless.
