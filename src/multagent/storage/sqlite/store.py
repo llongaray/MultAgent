@@ -15,7 +15,7 @@ class StoredRecordNotFound(KeyError):
 
 class SQLiteStore:
     SCHEMA_VERSION = 1
-    KINDS = frozenset({"workspace", "agent", "team", "workflow", "task", "run", "resource", "grant", "integration"})
+    KINDS = frozenset({"workspace", "agent", "team", "workflow", "task", "run", "resource", "grant", "integration", "settings"})
 
     def __init__(self, path: str | Path) -> None:
         self.path = Path(path)
