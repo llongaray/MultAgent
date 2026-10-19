@@ -76,9 +76,11 @@ class EncryptedFileVault:
             raise ValueError("Vault unlock password must have at least 12 characters")
         try:
             from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+            from cryptography.exceptions import InvalidTag
         except ImportError as exc:
             raise VaultUnavailable("Install the optional cryptography dependency") from exc
         self._aes = AESGCM
+        self._invalid_tag = InvalidTag
         self.path = Path(path)
         self._password = password.encode("utf-8")
         self._values: dict[str, str] = {}
@@ -95,7 +97,7 @@ class EncryptedFileVault:
         try:
             salt, nonce, ciphertext = (base64.b64decode(raw[k], validate=True) for k in ("salt", "nonce", "data"))
             values: dict[str, str] = json.loads(self._aes(self._key(salt)).decrypt(nonce, ciphertext, b"multagent:v1"))
-        except (ValueError, KeyError, TypeError) as exc:
+        except (ValueError, KeyError, TypeError, self._invalid_tag) as exc:
             raise VaultUnavailable("Vault could not be unlocked (wrong password or corrupted)") from exc
         return values
 
