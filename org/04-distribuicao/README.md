@@ -1,57 +1,49 @@
-# 04 · Distribuição, instalação e governança open-source
+# 04 · Distribuição: executáveis Desktop e Server, instalação e open-source
 
 > [← Mapa Mestre](../README.md) · [↑ Arquiteturas](../02-arquiteturas/README.md) · [Roadmap](../02-arquiteturas/07-plano-de-implementacao.md)
 
-## Decisão arquitetural — MultAgent instalável pelo terminal
+## Decisão do produto
 
-**O MultAgent será um projeto público no GitHub, distribuído para Windows e Linux.** O usuário deverá conseguir **instalar com um comando no terminal** e, após isso, **iniciar o serviço por um comando curto**, podendo criar seu próprio atalho. O objetivo é um produto local e open-source, sem exigir um instalador gráfico, conta central obrigatória ou Docker como dependência de usuários finais.
+**MultAgent Desktop** será um **executável com interface gráfica nativa** para Windows 10/11, Ubuntu e Debian Desktop. O comando planejado `multagent` abrirá a janela PySide6/Qt diretamente, sem usar navegador, React, WebView ou qualquer listener HTTP.
 
-**Stack definida para planejamento:** Python 3.12+ (CLI, FastAPI e orquestração dos agentes), React + TypeScript (painel web servido localmente), SQLite (configurações e jobs) e armazenamento seguro de credenciais por sistema operacional. **Tauri não é obrigatório** e fica fora do MVP. Frontend e backend serão distribuídos na mesma release; o usuário abre o painel no navegador do próprio computador.
+**MultAgent Server** será uma **distribuição executável headless** para Windows Server, Ubuntu Server e Debian Server. A configuração inicial coletará a porta e o endereço de bind. Somente a edição Server inicializa FastAPI e disponibiliza seu **painel React/TypeScript por HTTP**, com autenticação/TLS conforme exposição da rede.
 
-**Status:** especificação, não implementação. **Os comandos e URLs de instalação ainda não estão publicados**; não os execute até existirem releases verificadas.
+Ambas compartilham o **motor Python** (DeepSeek/Grok, orquestrador, funcionários/agentes, MCP, tarefas, banco e custos). A instalação ocorre via scripts oficiais de GitHub Releases, mas **ainda não existem scripts, binários ou aplicativos publicados**. O trabalho desta fase é especificação arquitetural.
 
-## O que ler nesta seção
+## Sumário navegável
 
-1. **[01 — Instalação, execução, atualização e atalhos](01-instalacao-cli.md)**: experiência no Windows/Linux, processos, binários, serviços opcionais e segurança da distribuição.
-2. **[02 — Licenças open-source e regras de publicação](02-licenca-e-contribuicoes.md)**: AGPLv3 x GPLv3, o que pode ser exigido legalmente, PRs e atribuição.
-3. **[03 — CI/CD, releases e layout de repositório](03-releases-e-estrutura.md)**: build por SO/arquitetura, verificações e política de atualização.
+1. **[Instalar e executar: Windows/Linux Desktop e Server](01-instalacao-cli.md)** — comandos, atalhos, porta apenas Server, atualização e logs.
+2. **[Licença e contribuições públicas](02-licenca-e-contribuicoes.md)** — AGPLv3 em avaliação, alterações distribuídas versus privadas, PRs e regras de contribuição.
+3. **[Releases, builds e organização do código](03-releases-e-estrutura.md)** — pipelines por SO/arquitetura e por edição, artefatos verificáveis.
+4. **[O que muda entre Desktop e Server](04-edicoes-desktop-server.md)** — tabela de capacidades e responsabilidades técnicas.
+5. **[Núcleo Python compartilhado e duas interfaces](../02-arquiteturas/09-desktop-server-core-compartilhado.md)** — contratos, persistência, GUI Qt e API Server.
 
-## Fluxo do usuário final (planejado)
+## Fluxos do usuário
 
 ```mermaid
 flowchart TD
-  G["GitHub público: código + releases"] --> I["Instalador verificado (Windows/Linux)"]
-  I --> CLI["CLI multagent no PATH"]
-  CLI --> START["multagent start"]
-  START --> API["Python FastAPI local: 127.0.0.1"]
-  API --> WEB["Painel React no navegador"]
-  WEB --> KEYS["Integrações: tokens DeepSeek/Grok em cofre local"]
-  WEB --> MODE["Modo: DeepSeek Only / Grok Only / Hybrid"]
-  MODE --> AGENTS["Funcionários/agentes: função + modelo + permissões"]
-  AGENTS --> RUN["Execução controlada dos jobs"]
+  GH["GitHub público e releases"] --> CHOICE{"Escolher edição"}
+  CHOICE --> D["Desktop: instalador Windows/Linux"]
+  CHOICE --> S["Server: instalador Windows/Linux Server"]
+  D --> RUN["multagent / atalho"]
+  RUN --> QT["Janela nativa Qt / PySide6"]
+  QT --> CORE["Core Python compartilhado"]
+  S --> INIT["multagent-server init: porta/bind"]
+  INIT --> START["multagent-server start"]
+  START --> HTTP["FastAPI HTTP com autenticação"]
+  HTTP --> REACT["React acessível pela rede autorizada"]
+  REACT --> CORE
+  CORE --> AG["Agentes DeepSeek / Grok / Hybrid"]
 ```
 
-O programa não precisará de Python nem Node instalados pelo usuário **no caminho de releases autossuficientes**; contribuidores poderão optar por desenvolver com Python/Node localmente.
+No **Desktop, terminal é apenas um meio de instalação, inicialização e diagnóstico**, não a interface principal. O programa pode iniciar por atalho sem console. No **Server, a CLI gerencia configuração e processo**, e a administração remota é feita por painel web.
 
-## Comandos previstos para o CLI (ainda indisponíveis)
+## Segurança e decisões pendentes
 
-```text
-multagent --version       # mostrar versão e origem da build
-multagent start           # executar no primeiro plano; Ctrl+C encerra
-multagent start --open    # iniciar e abrir o navegador
-multagent start --background   # opcional; daemon/serviço gerenciado
-multagent stop            # encerrar instância iniciada em background
-multagent status          # consultar disponibilidade local
-multagent update          # baixar nova release verificada após confirmação
-multagent doctor          # diagnosticar instalação, permissões e conectividade
-```
+- Cada instalação terá armazenamento próprio de credenciais; jamais registrar chaves da API em logs, YAML público ou GitHub.
+- Porta configurável somente para **Server**. Instalação não deve abrir firewall ou usar `0.0.0.0` silenciosamente. Acesso remoto exige identidade, permissões e TLS.
+- **Core Python único** — alterações no orquestrador valem para as duas edições, sem reimplementar agentes.
+- Binários e bundles por plataforma devem passar por CI e testes; builds Desktop empacotam Qt, Server não depende de Qt.
+- Seleção final de licença **ainda pendente**. PySide6 é LGPLv3/GPLv3/comercial; observar licenças dos módulos antes de redistribuir.
 
-## Decisões e limites
-
-- O serviço vincula-se inicialmente **somente a 127.0.0.1**. Acesso remoto/LAN será outro recurso, com autenticação e opt-in.
-- O usuário cadastra DeepSeek e/ou Grok, depois define o modo global. Cada funcionário recebe um provedor e modelo próprios, sempre dentro das permissões globais.
-- Chaves e segredos **não** serão guardados em texto puro no SQLite e **não** irão ao GitHub.
-- Todo **código aceito no repositório oficial** deve ser público e versionado; alterações privadas de terceiros **não** podem ser universalmente obrigadas a aparecer em GitHub por licenças open-source convencionais.
-- A escolha final da licença (AGPLv3 recomendada para avaliação) requer decisão explícita antes de adicionar o arquivo legal `LICENSE`.
-
-**Relacionamentos:** [Arquiteturas](../02-arquiteturas/README.md) · [Configuração de agentes](../02-arquiteturas/08-configuracao-e-perfis.md) · [Mapa mestre](../README.md).
+**Navegação:** [Mapa mestre](../README.md) · [Arquitetura](../02-arquiteturas/README.md) · [Instaladores](01-instalacao-cli.md).
