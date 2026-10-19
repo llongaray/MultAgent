@@ -28,12 +28,26 @@ class Scheduler:
         self._lock = RLock()
         self._jobs: dict[tuple[str, str], ScheduledRun] = {}
 
+    def _get(self, workspace_id: str, run_id: str) -> ScheduledRun:
+        key = (workspace_id, run_id)
+        if key not in self._jobs:
+            record = self.store.get("run", workspace_id, run_id)
+            if "budget_usd" not in record:
+                raise SchedulerError("Record does not belong to scheduler")
+            self._jobs[key] = ScheduledRun(run_id, workspace_id, record["budget_usd"],
+                record["approval_required"], record["approved"], record["state"])
+        return self._jobs[key]
+
     def enqueue(self, *, workspace_id: str, run_id: str, budget_usd: float, approval_required: bool = False) -> ScheduledRun:
         if not workspace_id or not run_id or budget_usd < 0 or budget_usd > self.maximum_budget_usd:
             raise SchedulerError("Invalid run identity or over budget")
         with self._lock:
             key = workspace_id, run_id
             if key not in self._jobs:
+                try:
+                    return self._get(workspace_id, run_id)
+                except KeyError:
+                    pass
                 job = ScheduledRun(run_id, workspace_id, budget_usd, approval_required)
                 self._jobs[key] = job
                 self._save(job)
@@ -43,7 +57,7 @@ class Scheduler:
         if not principal_id.strip():
             raise SchedulerError("Explicit approval identity required")
         with self._lock:
-            job = self._jobs[workspace_id, run_id]
+            job = self._get(workspace_id, run_id)
             if job.status != "queued":
                 raise SchedulerError("Only queued runs may be approved")
             job.approved = True
@@ -52,7 +66,7 @@ class Scheduler:
 
     def start(self, workspace_id: str, run_id: str) -> bool:
         with self._lock:
-            job = self._jobs[workspace_id, run_id]
+            job = self._get(workspace_id, run_id)
             if job.status != "queued":
                 return False  # idempotency / no double effects
             if job.approval_required and not job.approved:
@@ -65,7 +79,7 @@ class Scheduler:
 
     def finish(self, workspace_id: str, run_id: str, *, success: bool) -> None:
         with self._lock:
-            job = self._jobs[workspace_id, run_id]
+            job = self._get(workspace_id, run_id)
             if job.status != "running":
                 raise SchedulerError("Run is not active")
             job.status = "succeeded" if success else "failed"
@@ -73,7 +87,7 @@ class Scheduler:
 
     def cancel(self, workspace_id: str, run_id: str) -> None:
         with self._lock:
-            job = self._jobs[workspace_id, run_id]
+            job = self._get(workspace_id, run_id)
             if job.status in ("succeeded", "failed"):
                 raise SchedulerError("Completed run cannot be cancelled")
             job.status = "cancelled"
