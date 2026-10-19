@@ -9,51 +9,37 @@ description = "Base compartilhada do MultAgent Desktop e Server"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
-classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
-    "Environment :: Console",
-    "Intended Audience :: Developers",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-]
+classifiers = ["Development Status :: 2 - Pre-Alpha", "Intended Audience :: Developers", "Operating System :: OS Independent", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Programming Language :: Python :: 3.13"]
 
 [project.optional-dependencies]
 providers = ["httpx>=0.27,<1"]
 vault = ["keyring>=25,<27", "cryptography>=43,<47"]
 desktop = ["PySide6>=6.8,<7", "keyring>=25,<27", "cryptography>=43,<47", "httpx>=0.27,<1"]
-dev = ["pytest>=8,<10", "ruff>=0.8,<1", "mypy>=1.10,<2", "build>=1,<2", "cryptography>=43,<47", "httpx>=0.27,<1"]
+server = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "httpx>=0.27,<1"]
+dev = ["pytest>=8,<10", "ruff>=0.8,<1", "mypy>=1.10,<2", "build>=1,<2", "cryptography>=43,<47", "httpx>=0.27,<1", "fastapi>=0.115,<1", "uvicorn>=0.30,<1"]
 
 [project.gui-scripts]
 multagent = "multagent.desktop.main:main"
-
 [project.scripts]
 multagent-cli = "multagent.desktop.cli:main"
+multagent-server = "multagent.server.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["multagent*"]
 namespaces = false
-
 [tool.setuptools.package-data]
 multagent = ["py.typed"]
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = "-ra"
-
 [tool.ruff]
 line-length = 100
 target-version = "py311"
 include = ["*.py", "pyproject.toml"]
-
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I", "UP", "B"]
-
 [tool.mypy]
 python_version = "3.11"
 files = ["src/multagent"]
