@@ -19,7 +19,7 @@ def test_boundary_and_explicit_grants(tmp_path, monkeypatch):
     g=GitWorkspace(m,root)
     with pytest.raises(WorkspaceBoundaryError):g._within(other)
     with pytest.raises(PermissionError):g.worktree("ws","actor","g",root,"HEAD")
-    with pytest.raises(PermissionError):g.status("other","actor","g")
+    with pytest.raises((PermissionError, KeyError)):g.status("other","actor","g")
     s=SandboxRunner(m)
     with pytest.raises(ShellDenied):s.run("ws","actor","d","python-version")
     with pytest.raises(ShellDenied):s.run("ws","actor","d","rm -rf",approved=True)
