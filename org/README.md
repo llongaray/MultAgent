@@ -1,6 +1,6 @@
 # MultAgent — Mapa Mestre de Conhecimento
 
-> **Ponto de entrada único da documentação.** Aqui está a árvore completa para entender, planejar, desenvolver e operar o MultAgent. Os capítulos aprofundam cada assunto e oferecem links para voltar. Revisão: **18/10/2026**. Esta documentação descreve arquitetura e APIs; implementação depende de etapas futuras.
+> **Ponto de entrada único da documentação.** Aqui está a árvore completa para entender, planejar, desenvolver e operar o MultAgent. Os capítulos aprofundam cada assunto e oferecem links para voltar. Revisão: **19/10/2026**. Esta documentação descreve arquitetura e APIs; implementação depende de etapas futuras.
 
 ## 1. O que estamos construindo?
 
@@ -25,6 +25,7 @@ flowchart TB
     ROOT --> T["03 · Trilhas e decisões"]
     ROOT --> DIST["04 · Distribuição Windows/Linux + open-source"]
     ROOT --> INTEG["05 · Integrações Git, SSH, MCP, apps e skills"]
+    ROOT --> DEV["06 · Estrutura física e desenvolvimento"]
     F --> L["Como funciona um LLM, tokens e contexto"]
     F --> AG["Agentes, ferramentas, MCP e RAG"]
     F --> WHY["Por que comparar DeepSeek e Grok"]
@@ -41,6 +42,8 @@ flowchart TB
     INTEG --> GIT["Workspaces: GitHub, GitLab, Bitbucket, SSH"]
     INTEG --> MCP["Catálogo público MCP / plugins / skills"]
     INTEG --> ACCESS["Permissões do PC e OAuth por agente"]
+    DEV --> MOD["README por pasta: core, Desktop, Server, tools"]
+    DEV --> TESTS["Testes, instaladores, exemplos e CI previstos"]
 ```
 
 ### 00 — Fundamentos: entender os conceitos antes da API
@@ -93,6 +96,16 @@ flowchart TB
 - [OAuth, tokens, vault e confiança por extensão](05-integracoes/03-oauth-tokens-seguranca.md).
 - [Exemplos práticos de workflows com hierarquia](05-integracoes/04-workflows-e-exemplos.md).
 - **[Caminho de implementação em marcos](05-integracoes/05-caminho-de-implementacao.md)**.
+
+### 06 — Desenvolvimento: estrutura física do repositório já criada
+
+- **[Guia de desenvolvimento](06-desenvolvimento/README.md)** — módulo de entrada e limites de implementação.
+- **[Organograma físico de diretórios e arquivos](06-desenvolvimento/01-mapa-de-pastas.md)** — estrutura real com READMEs de cada pasta.
+- [Contratos e dependências](06-desenvolvimento/02-contratos-e-dependencias.md) — fronteiras core, Desktop, Server, ferramentas e broker.
+- [Padrões de documentação](06-desenvolvimento/03-padroes-de-documentacao.md) — convenções para contribuintes.
+- [Validação e critérios de aceite](06-desenvolvimento/04-validacao-e-aceite.md) — o que já existe e o que continua pendente.
+
+**Estado:** foram criadas pastas e arquivos Markdown de estrutura, **não** código-fonte executável. Cada diretório técnico novo contém seu próprio README.
 
 ## 3. Entendimento rápido: como uma IA LLM funciona?
 

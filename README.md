@@ -16,6 +16,7 @@ Este é o **ponto de entrada da documentação**: apresenta os conceitos de IA/L
 | API do Grok/xAI, custos e ferramentas | [01 · Grok](org/01-provedores/grok/README.md) |
 | DeepSeek Only, Grok Only e Hybrid | [02 · Arquiteturas](org/02-arquiteturas/README.md) |
 | Como estudar e implementar | [03 · Trilhas](org/03-trilhas/README.md) |
+| Estrutura real das pastas e documentação dos módulos | [06 · Desenvolvimento](org/06-desenvolvimento/README.md) · [Mapa físico](org/06-desenvolvimento/01-mapa-de-pastas.md) |
 | Desktop nativo, Server, instalação e releases | [04 · Distribuição e governança](org/04-distribuicao/README.md) |
 | Diferença entre os executáveis Desktop e Server | [Edições Desktop/Server](org/04-distribuicao/04-edicoes-desktop-server.md) |
 | GitHub, GitLab, Bitbucket, SSH, apps, MCPs, plugins e skills | [05 · Integrações e catálogo](org/05-integracoes/README.md) |
@@ -26,6 +27,6 @@ Este é o **ponto de entrada da documentação**: apresenta os conceitos de IA/L
 
 **Segurança:** a instalação e determinadas ferramentas podem pedir privilégios administrativos, mas a interface, os modelos e a execução normal dos agentes **não** funcionarão continuamente como root/Administrador. Um broker privilegiado separado e auditado atenderá ações elevadas especificamente autorizadas. [Modelo de acesso à máquina](org/02-arquiteturas/11-acesso-maquina-e-isolamento.md).
 
-**A documentação técnica reside em `org/`**, organizada hierarquicamente, com retorno ao mapa mestre em todas as páginas.
+**A documentação central fica em `org/`.** As pastas de desenvolvimento criadas em `src/`, `frontend-server/`, `tests/`, `scripts/`, `config/`, `examples/`, `assets/` e `.github/` também possuem `README.md` próprios para orientar futuras implementações. [Consultar a árvore completa](org/06-desenvolvimento/01-mapa-de-pastas.md).
 
-> **Status:** documentação e desenho de arquitetura; **o software multiagente ainda não foi implementado**. Revisão: 18/10/2026. Consulte documentação oficial [DeepSeek](https://api-docs.deepseek.com/) e [xAI/Grok](https://docs.x.ai/developers) para versões, preços e condições de API.
+> **Status:** documentação e desenho de arquitetura; **o software multiagente ainda não foi implementado**. Revisão: 19/10/2026. Consulte documentação oficial [DeepSeek](https://api-docs.deepseek.com/) e [xAI/Grok](https://docs.x.ai/developers) para versões, preços e condições de API.

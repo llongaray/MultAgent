@@ -2,44 +2,22 @@
 
 > [← Mapa Mestre](../README.md) · [↑ Distribuição](README.md) · [Instalação](01-instalacao-cli.md) · [Governança](02-licenca-e-contribuicoes.md)
 
-## Layout proposto para a implementação
+## Layout de diretórios já versionado (apenas Markdown)
 
-```text
-MultAgent/
-├── README.md                    # link para o mapa mestre
-├── org/                         # documentação estruturada já existente
-│   ├── README.md
-│   ├── 00-fundamentos/
-│   ├── 01-provedores/
-│   ├── 02-arquiteturas/
-│   ├── 03-trilhas/
-│   └── 04-distribuicao/
-├── src/multagent/               # Python compartilhado
-│   ├── core/                    # orquestrador, workflow, router, agentes
-│   ├── providers/               # adapters DeepSeek e Grok
-│   ├── tools/                   # tool gateway, MCP local
-│   ├── storage/                 # SQLite, Postgres opcional, migrações
-│   ├── security/                # vault e controle de acesso
-│   ├── desktop/                 # PySide6/Qt Widgets: GUI verdadeira
-│   ├── server/                  # FastAPI: HTTP somente edição Server
-│   └── cli/                     # comandos multagent / multagent-server
-├── frontend-server/             # React + TypeScript: somente edição Server
-│   ├── src/
-│   └── package.json
-├── scripts/
-│   ├── install.sh               # FUTURO: instalação Linux
-│   └── install.ps1              # FUTURO: instalação Windows
-├── tests/
-├── .github/workflows/           # FUTURO: checks e builds
-├── pyproject.toml               # FUTURO: pacote e entrypoint multagent
-├── uv.lock                      # FUTURO: lockfile reprodutível
-├── LICENSE                      # PENDENTE: definição pelo titular
-└── .gitignore
-```
+A estrutura técnica agora está fisicamente criada no GitHub, com um `README.md` em **cada pasta**. O organograma detalhado e clicável está em **[06 · Mapa físico de diretórios](../06-desenvolvimento/01-mapa-de-pastas.md)**.
 
-**Referência da separação entre GUIs e serviços:** [Núcleo Python compartilhado](../02-arquiteturas/09-desktop-server-core-compartilhado.md).
+| Caminho real | Função planejada |
+|---|---|
+| [src/multagent/](../../src/multagent/README.md) | Motor Python, agentes, modelos, tools, segurança, storage, Desktop/Server e CLI |
+| [frontend-server/](../../frontend-server/README.md) | React/TypeScript **somente edição Server** |
+| [scripts/](../../scripts/README.md) | Instaladores Windows/Linux e releases futuros |
+| [tests/](../../tests/README.md) | Unitários, integração, E2E, segurança e smoke tests por SO |
+| [config/](../../config/README.md) | Schemas e templates sem segredos |
+| [examples/](../../examples/README.md) | Perfis e workflows documentais |
+| [assets/](../../assets/README.md) | Marca, ícones e materiais visuais futuros |
+| [.github/](../../.github/README.md) | Documentação para CI, PRs e templates |
 
-**Importante:** os caminhos de código são **somente um projeto de estrutura**; ainda não estão criados como arquivos executáveis.
+**Ainda não existem** `pyproject.toml`, código `.py`, fonte `.tsx`, `package.json`, `install.sh`, `install.ps1`, workflows YAML ou binários. Esses arquivos só serão adicionados quando sua implementação for autorizada e testada. Não confundir diretório presente com recurso funcional.
 
 ## Fluxo de contribuição e publicação
 

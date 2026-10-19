@@ -34,6 +34,13 @@ Esta área oferece percursos de leitura sem obrigar a percorrer dezenas de arqui
 5. [Catálogo público MCP, plugins e skills](../05-integracoes/02-catalogo-mcp-plugins-skills.md).
 6. [Roadmap de integração em marcos](../05-integracoes/05-caminho-de-implementacao.md).
 
+## Quero localizar os módulos e arquivos do repositório
+
+1. [Mapa físico de diretórios criados](../06-desenvolvimento/01-mapa-de-pastas.md).
+2. [Contratos entre Core, Desktop, Server e tools](../06-desenvolvimento/02-contratos-e-dependencias.md).
+3. [Padrões de documentação para futuras contribuições](../06-desenvolvimento/03-padroes-de-documentacao.md).
+4. [Critérios de aceite da fase documental](../06-desenvolvimento/04-validacao-e-aceite.md).
+
 ## Quero instalar ou distribuir no Windows/Linux
 
 1. [Visão geral da distribuição](../04-distribuicao/README.md).

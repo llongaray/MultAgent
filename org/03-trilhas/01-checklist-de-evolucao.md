@@ -13,6 +13,8 @@ Este documento permite acompanhar o projeto e identificar quando passar de docum
 - [x] Documentada missão de agentes hierárquicos com acesso por recurso para trabalho real.
 - [x] Documentado catálogo de MCP/plugins/skills, Git/SSH e política de elevação por broker.
 - [x] Mapa mestre com acesso por tópico, links cruzados e navegação.
+- [x] Criadas as pastas técnicas `src/multagent/`, `frontend-server/`, `scripts/`, `tests/`, `config/`, `examples/`, `assets/` e `.github/` com README por diretório.
+- [x] Publicado o [mapa físico do projeto](../06-desenvolvimento/01-mapa-de-pastas.md), sem criar código-fonte funcional.
 - [x] Especificação de duas edições instaláveis por comando: Desktop GUI Qt e Server headless com FastAPI/React; política de releases.
 - [ ] Escolher e publicar licença legal definitiva (AGPLv3 em avaliação).
 - [ ] Verificação de todas as APIs/modelos com chaves de teste e créditos controlados.

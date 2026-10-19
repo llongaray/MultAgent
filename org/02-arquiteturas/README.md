@@ -27,6 +27,7 @@
 11. [Hierarquia de funcionários, tarefas e política de delegação](10-hierarquia-processos-e-politicas.md).
 12. [Acesso à máquina, apps GUI, privilégios e isolamento](11-acesso-maquina-e-isolamento.md).
 13. [Git/SSH, catálogo MCP, plugins e skills](../05-integracoes/README.md).
+14. [Mapa de pastas físicas e documentação do código futuro](../06-desenvolvimento/01-mapa-de-pastas.md).
 
 ## Documentação específica dos provedores
 

@@ -7,6 +7,7 @@
 ## Marco 0 — Definir e testar os contratos do produto
 
 - [x] Documentar missão, pessoas/agentes, hierarquia, repositórios, catálogo e política de privilégios.
+- [x] Reservar as pastas dos módulos e publicar README documental para cada uma, com [árvore física](../06-desenvolvimento/01-mapa-de-pastas.md).
 - [ ] Formalizar schemas `Agent`, `Team`, `Workspace`, `Workflow`, `PermissionGrant`, `IntegrationInstance` e `AuditEvent`.
 - [ ] Definir licença open-source final e compatibilidade de Qt, plugins e dependências.
 - [ ] Criar matriz de suporte Windows 10/11 / Ubuntu / Debian / edições Server.
