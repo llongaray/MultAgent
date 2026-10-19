@@ -1,14 +1,13 @@
 """Native Desktop management screens: agents, credentials, permissions and runs."""
 from __future__ import annotations
 
-from dataclasses import asdict
 from pathlib import Path
 from uuid import uuid4
 
 from PySide6.QtCore import QObject, QThread, Signal, Slot
 from PySide6.QtWidgets import (
     QComboBox, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-    QMessageBox, QPlainTextEdit, QPushButton, QSpinBox, QDoubleSpinBox,
+    QMessageBox, QPlainTextEdit, QPushButton, QDoubleSpinBox,
     QTabWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget,
 )
 
