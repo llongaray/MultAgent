@@ -17,7 +17,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--bind", default="127.0.0.1")
     parser.add_argument("--tls-cert")
-    parser.add_argument("--tls-key")\n    parser.add_argument("--allowed-host", action="append", default=[], help="Explicit TLS hostname/IP allowed for remote clients")
+    parser.add_argument("--tls-key")
+    parser.add_argument("--allowed-host", action="append", default=[], help="Explicit TLS hostname/IP allowed for remote clients")
     args = parser.parse_args(argv)
     if args.command == "version":
         print(__version__)
