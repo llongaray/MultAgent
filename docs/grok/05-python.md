@@ -52,7 +52,7 @@ r = client.responses.create(
 print(r.output_text)
 ```
 
-Web Search é cobrada separadamente; além de custo de tokens, observe ``usage`` no retorno.
+Web Search é cobrada separadamente; além de custo de tokens, observe `usage` no retorno.
 
 ## Exemplo C: function calling (função local simulada)
 
