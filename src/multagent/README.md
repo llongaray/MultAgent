@@ -2,11 +2,15 @@
 
 > [← Mapa Mestre](../../org/README.md) · [↑ src](../README.md) · [Guia de desenvolvimento](../../org/06-desenvolvimento/README.md)
 
-**Estado: documentação, sem código implementado.**
+**P0-01 — bootstrap implementado neste PR:** `src/multagent/__init__.py` fornece importação e versão `0.0.1.dev0` sem efeitos colaterais; `py.typed` sinaliza tipagem. Os módulos de domínio, ferramentas, provedores e interfaces permanecem somente documentados.
 
 ## Responsabilidade
 
 Reunir os componentes compartilhados de DeepSeek/Grok, políticas, agentes e workflows, além dos entrypoints separados **Desktop PySide6/Qt** e **Server FastAPI/React**.
+
+## Instalação local do pacote-base
+
+Na raiz do repositório: `python -m pip install -e .`. Validar `python -c "import multagent; print(multagent.__version__)"`. Isso **não** disponibiliza comandos `multagent`/`multagent-server`; esses entrypoints dependem das respectivas implementações futuras.
 
 ## Submódulos previstos
 
