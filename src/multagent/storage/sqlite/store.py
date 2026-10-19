@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 import json
-import os
+from contextlib import contextmanager
 from pathlib import Path
 import sqlite3
 from threading import RLock
-from typing import Any
+from typing import Any, Iterator
 
 
 class StoredRecordNotFound(KeyError):
@@ -24,14 +24,18 @@ class SQLiteStore:
         self._lock = RLock()
         self.migrate()
 
-    def _connect(self) -> sqlite3.Connection:
+    @contextmanager
+    def _connect(self) -> Iterator[sqlite3.Connection]:
         conn = sqlite3.connect(str(self.path), timeout=10, isolation_level=None)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA busy_timeout=10000")
         conn.execute("PRAGMA foreign_keys=ON")
         if str(self.path) != ":memory:":
             conn.execute("PRAGMA journal_mode=WAL")
-        return conn
+        try:
+            yield conn
+        finally:
+            conn.close()
 
     def migrate(self) -> None:
         with self._lock, self._connect() as c:
