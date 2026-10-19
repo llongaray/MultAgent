@@ -18,6 +18,7 @@ class SkillImporter:
     def import_skill(self, *, ws:str,actor:str,rid:str,provider:str,revision:str,path:str,
                      sha256:str,approved_network:bool=False)->Path:
         if not approved_network:raise SkillDenied("Network import needs authorization")
+        if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}",ws):raise SkillDenied("Invalid workspace directory identity")
         resource=self.resources.require(workspace_id=ws,principal_id=actor,resource_id=rid,action="read")
         if resource.kind!="git":raise SkillDenied("Git repository grant required")
         match=re.fullmatch(r"https://(github.com|gitlab.com)/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)",resource.locator)
