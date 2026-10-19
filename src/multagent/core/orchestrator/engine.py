@@ -1,7 +1,7 @@
 """Topological task execution, trace capture and strict approvals."""
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Callable
 from multagent.core.domain import DomainError, Run, RunState, Task, TaskState, Workflow
 from multagent.storage.sqlite import SQLiteStore
