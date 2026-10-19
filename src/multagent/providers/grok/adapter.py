@@ -24,7 +24,7 @@ class GrokAdapter(HTTPAdapter):
             payload["tools"] = tools
         data = self._request("POST", "/responses", approved_live=approved_live, payload=payload)
         try:
-            text = data.get("output_text") or ""
+            text = ""
             calls = []
             for item in data.get("output", []):
                 if item.get("type") == "function_call":
@@ -33,6 +33,8 @@ class GrokAdapter(HTTPAdapter):
                     for part in item.get("content", []):
                         if part.get("type") == "output_text":
                             text += part.get("text") or ""
+            if not text:
+                text = data.get("output_text") or ""
             usage = data.get("usage") or {}
             return ModelOutput("grok", data.get("model", model), text,
                 Usage(int(usage.get("input_tokens", 0)), int(usage.get("output_tokens", 0))), tuple(calls))
