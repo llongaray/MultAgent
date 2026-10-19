@@ -6,7 +6,8 @@ from urllib.parse import urlsplit
 from typing import Any
 from multagent.resources import ResourceManager
 
-class MCPDenied(PermissionError):pass
+class MCPDenied(PermissionError):
+    pass
 
 @dataclass(frozen=True)
 class MCPServer:
@@ -27,9 +28,12 @@ class MCPClient:
             u.hostname.lower().endswith(".local") or u.username or u.password or u.fragment or u.query or
             u.port not in (None,443)):
             raise MCPDenied("Untrusted MCP server origin")
-        try:ipaddress.ip_address(u.hostname)
-        except ValueError:pass
-        else:raise MCPDenied("Numeric IP destinations are forbidden")
+        try:
+            ipaddress.ip_address(u.hostname)
+        except ValueError:
+            pass
+        else:
+            raise MCPDenied("Numeric IP destinations are forbidden")
         if server.credential_ref and not server.credential_ref.startswith("vault:"):
             raise MCPDenied("Credential must be stored in vault")
         self.servers[server.id]=server
@@ -60,7 +64,8 @@ class MCPClient:
                 return await session.call_tool(tool_name,args or {})
 
     async def list_tools(self,ws:str,actor:str,rid:str,server_id:str,*,approved_network:bool=False)->Any:
-        if not approved_network:raise MCPDenied("Remote tool discovery requires consent")
+        if not approved_network:
+            raise MCPDenied("Remote tool discovery requires consent")
         s=self._authorized(ws,actor,rid,server_id)
         return await self._invoke(s,None,None)
 
@@ -69,5 +74,6 @@ class MCPClient:
         if not approved_execution or not tool or tool.startswith("_"):
             raise MCPDenied("MCP tool execution requires explicit approval")
         s=self._authorized(ws,actor,rid,server_id)
-        # Return untrusted tool output only; never obey tool-provided instructions as policy.
+        # Return untrusted tool output only
+        never obey tool-provided instructions as policy.
         return await self._invoke(s,tool,args)
