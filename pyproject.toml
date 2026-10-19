@@ -22,12 +22,9 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=8,<10",
-    "ruff>=0.8,<1",
-    "mypy>=1.10,<2",
-    "build>=1,<2",
-]
+vault = ["keyring>=25,<27", "cryptography>=43,<47"]
+desktop = ["PySide6>=6.8,<7", "keyring>=25,<27", "cryptography>=43,<47"]
+dev = ["pytest>=8,<10", "ruff>=0.8,<1", "mypy>=1.10,<2", "build>=1,<2", "cryptography>=43,<47"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
