@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from PySide6.QtCore import QObject, QThread, Signal, Slot
 from PySide6.QtWidgets import (
-    QComboBox, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow,
+    QComboBox, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow, QInputDialog,
     QMessageBox, QPlainTextEdit, QPushButton, QDoubleSpinBox,
     QTabWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget,
 )
@@ -133,7 +133,7 @@ class MainWindow(QMainWindow):
         form.addRow("Modelo", self.agent_model)
         layout.addLayout(form)
         row = QHBoxLayout()
-        for label, fn in [("Adicionar funcionário", self.add_agent), ("Excluir selecionado", self.delete_agent)]:
+        for label, fn in [("Adicionar funcionário", self.add_agent), ("Editar nome", self.edit_agent), ("Excluir selecionado", self.delete_agent)]:
             btn = QPushButton(label)
             btn.clicked.connect(fn)
             row.addWidget(btn)
@@ -154,6 +154,18 @@ class MainWindow(QMainWindow):
             self.refresh_agents()
         except (ValueError, RuntimeError) as exc:
             QMessageBox.warning(self, "Funcionário inválido", str(exc))
+
+    def edit_agent(self) -> None:
+        row = self.agent_table.currentRow()
+        if row < 0:
+            return
+        agent_id = self.agent_table.item(row, 0).text()
+        agent = self.registry.get(WORKSPACE, agent_id)
+        name, ok = QInputDialog.getText(self, "Editar funcionário", "Nome", text=agent.name)
+        if ok and name.strip():
+            agent.name = name.strip()
+            self.registry.save(agent)
+            self.refresh_agents()
 
     def delete_agent(self) -> None:
         row = self.agent_table.currentRow()
@@ -234,8 +246,14 @@ class MainWindow(QMainWindow):
         button = QPushButton("Conceder permissão")
         button.clicked.connect(self.grant_permission)
         layout.addWidget(button)
-        layout.addWidget(QLabel("Para revogar ou auditar grants, utilize a operação administrativa segura."))
-        layout.addStretch()
+        self.grants_table = QTableWidget(0, 4)
+        self.grants_table.setHorizontalHeaderLabels(["Grant ID", "Funcionário", "Ação", "Revogado"])
+        self.grants_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        layout.addWidget(self.grants_table)
+        revoke_button = QPushButton("Revogar grant selecionado")
+        revoke_button.clicked.connect(self.revoke_permission)
+        layout.addWidget(revoke_button)
+        self.refresh_grants()
 
     def grant_permission(self) -> None:
         try:
@@ -246,9 +264,33 @@ class MainWindow(QMainWindow):
             self.resources.grant(PermissionGrant(str(uuid4()), WORKSPACE, principal.id, resource.id,
                                                 self.permission_action.currentText()))
             self.refresh_audit()
+            self.refresh_grants()
             self.statusBar().showMessage("Permissão registrada e auditada")
         except (ValueError, KeyError, RuntimeError) as exc:
             QMessageBox.warning(self, "Permissão não criada", str(exc))
+
+    def refresh_grants(self) -> None:
+        records = self.store.list("grant", WORKSPACE)
+        self.grants_table.setRowCount(len(records))
+        for i, record in enumerate(records):
+            columns = (record["id"], record["principal_id"], record["action"],
+                       "Sim" if record["revoked"] else "Não")
+            for j, value in enumerate(columns):
+                self.grants_table.setItem(i, j, QTableWidgetItem(value))
+
+    def revoke_permission(self) -> None:
+        row = self.grants_table.currentRow()
+        if row < 0:
+            return
+        grant_id = self.grants_table.item(row, 0).text()
+        confirm = QMessageBox.question(self, "Revogar", "Revogar esta permissão?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No)
+        if confirm != QMessageBox.StandardButton.Yes:
+            return
+        self.resources.revoke(WORKSPACE, grant_id)
+        self.refresh_grants()
+        self.refresh_audit()
 
     def _build_runs(self) -> None:
         page, layout = self._page("Execuções")
@@ -300,12 +342,16 @@ class MainWindow(QMainWindow):
                 QMessageBox.StandardButton.No)
             if answer != QMessageBox.StandardButton.Yes:
                 return
+            run_id = str(uuid4())
+            self._persist_run(run_id, agent.id, agent.provider, "running")
             thread = QThread()
             worker = RemoteWorker(agent.provider, agent.model, prompt, vault, credential_ref)
             worker.moveToThread(thread)
             thread.started.connect(worker.run)
             worker.succeeded.connect(self.run_output.setPlainText)
             worker.failed.connect(self.run_output.setPlainText)
+            worker.succeeded.connect(lambda _text: self._persist_run(run_id, agent.id, agent.provider, "succeeded"))
+            worker.failed.connect(lambda _text: self._persist_run(run_id, agent.id, agent.provider, "failed"))
             worker.finished.connect(thread.quit)
             worker.finished.connect(worker.deleteLater)
             thread.finished.connect(thread.deleteLater)
@@ -316,6 +362,21 @@ class MainWindow(QMainWindow):
             thread.start()
         except (KeyError, PermissionError, RuntimeError, ValueError) as exc:
             QMessageBox.warning(self, "Execução bloqueada", str(exc))
+
+    def _persist_run(self, run_id: str, agent_id: str, provider: str, state: str) -> None:
+        # Keep potentially sensitive prompts and model output out of durable logs.
+        self.store.put("run", WORKSPACE, run_id,
+            {"id": run_id, "workspace_id": WORKSPACE, "agent_id": agent_id,
+             "provider": provider, "state": state})
+        self.refresh_audit()
+
+    def closeEvent(self, event: object) -> None:
+        if any(thread.isRunning() for thread, _worker in self._threads):
+            QMessageBox.information(self, "Execução em andamento",
+                "Aguarde a finalização da requisição antes de fechar a aplicação.")
+            event.ignore()
+            return
+        super().closeEvent(event)
 
     def _build_logs(self) -> None:
         page, layout = self._page("Logs")
@@ -330,4 +391,6 @@ class MainWindow(QMainWindow):
     def refresh_audit(self) -> None:
         lines = [str(row["occurred_at"]) + " | " + row["principal_id"] + " | " + row["action"]
                  for row in self.store.audit_log(WORKSPACE)]
+        lines.extend("Run " + item["id"] + " | " + item.get("state", "unknown")
+                     for item in self.store.list("run", WORKSPACE))
         self.audit_text.setPlainText("\n".join(lines))
