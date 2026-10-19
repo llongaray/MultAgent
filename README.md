@@ -1,27 +1,22 @@
 # MultAgent
 
-**Arquitetura multiagente modular**, em português brasileiro, com documentação de APIs oficiais DeepSeek e Grok/xAI, além de propostas independentes e híbridas. Nesta fase o repositório contém documentação técnica e desenho de software; **a aplicação MultiAgent ainda não foi implementada**.
+Plataforma multiagente em planejamento, com suporte arquitetural para **DeepSeek**, **Grok/xAI** e um modo **híbrido** que distribui tarefas conforme custo, recursos, privacidade e qualidade.
 
-## Comece por aqui
+## Documentação
 
-| Seção | Conteúdo |
+### **[Abrir o Mapa Mestre — org/README.md](org/README.md)**
+
+Este é o **ponto de entrada da documentação**: apresenta os conceitos de IA/LLM, tokens, agentes, MCP e RAG; contém o organograma clicável da organização e orienta a leitura de todos os guias.
+
+| Quero entender... | Acesse |
 |---|---|
-| **[Arquitetura multiagente](docs/arquitetura/README.md)** | Componentes, modos DeepSeek Only / Grok Only / Hybrid, router, contratos e roadmap |
-| **[DeepSeek API](docs/deepseek/README.md)** | Modelos, preços, endpoints, tools, MCP via orquestrador e exemplos em 10 linguagens |
-| **[Grok / xAI API](docs/grok/README.md)** | Modelos, custos, Responses API, Search, MCP remoto, Python e JS/TS |
+| Fundamentos de IA e LLM | [00 · Fundamentos](org/00-fundamentos/README.md) |
+| API da DeepSeek, custos e código | [01 · DeepSeek](org/01-provedores/deepseek/README.md) |
+| API do Grok/xAI, custos e ferramentas | [01 · Grok](org/01-provedores/grok/README.md) |
+| DeepSeek Only, Grok Only e Hybrid | [02 · Arquiteturas](org/02-arquiteturas/README.md) |
+| Como estudar e implementar | [03 · Trilhas](org/03-trilhas/README.md) |
+| Comparativo dos provedores | [Por que DeepSeek e Grok?](org/00-fundamentos/03-por-que-deepseek-e-grok.md) |
 
-## Três modalidades
+**A documentação técnica reside em `org/`**, organizada hierarquicamente, com retorno ao mapa mestre em todas as páginas.
 
-- **[Somente DeepSeek](docs/arquitetura/02-somente-deepseek.md)** — agentes com DeepSeek e ferramentas gerenciadas pelo backend.
-- **[Somente Grok](docs/arquitetura/03-somente-grok.md)** — agentes com xAI Responses, tools geridas e MCP remoto opcional.
-- **[Híbrido DeepSeek + Grok](docs/arquitetura/04-hibrido.md)** — router seleciona provedor por custo, capacidade, privacidade e qualidade.
-
-### Documentos centrais
-
-[Topologia](docs/arquitetura/01-visao-componentes.md) · [Roteamento e custo](docs/arquitetura/05-roteamento-e-custos.md) · [Contratos/adapters](docs/arquitetura/06-contratos-e-adapters.md) · [Configuração YAML](docs/arquitetura/08-configuracao-e-perfis.md) · [Roadmap](docs/arquitetura/07-plano-de-implementacao.md)
-
-### Regra de segurança
-
-Cada provedor tem sua própria chave e faturamento. Chaves **nunca** devem ser incluídas no repositório; fallback entre provedores depende de permissão explícita. Ferramentas MCP externas não são automaticamente confiáveis.
-
-> **Revisão da documentação: 18/10/2026.** Modelos, preços, aliases e funcionalidades podem mudar. Consulte [DeepSeek oficial](https://api-docs.deepseek.com/) e [xAI oficial](https://docs.x.ai/developers). Exemplos didáticos não foram testados com credenciais autenticadas.
+> **Status:** documentação e desenho de arquitetura; **o software multiagente ainda não foi implementado**. Revisão: 18/10/2026. Consulte documentação oficial [DeepSeek](https://api-docs.deepseek.com/) e [xAI/Grok](https://docs.x.ai/developers) para versões, preços e condições de API.
