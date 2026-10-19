@@ -2,6 +2,22 @@
 
 **Missão:** permitir que qualquer usuário configure **funcionários de IA hierárquicos** para executar trabalhos reais no computador/servidor, repositórios Git, aplicativos e ferramentas externas, com acesso e autonomia definidos por pessoa/agente. Projeto multiagente open-source em planejamento, com **duas edições independentes**: Desktop com janela gráfica PySide6/Qt e Server headless com FastAPI + painel React. O motor Python compartilha **DeepSeek**, **Grok/xAI** ou **ambos**. [Ler o objetivo completo](org/00-fundamentos/05-proposito-e-casos-de-uso.md).
 
+## Bootstrap Python (P0-01)
+
+Este PR introduz somente a **estrutura de pacote Python** (`pyproject.toml` e `src/multagent`), sem agentes, API, interface gráfica ou instalador. Para contribuir localmente, com Python 3.11 ou superior:
+
+```bash
+python -m venv .venv
+# Ative o ambiente virtual conforme seu sistema operacional.
+python -m pip install -e ".[dev]"
+python -m pytest
+python -m ruff check src tests
+python -m ruff format --check src tests
+python -m mypy
+```
+
+O build de wheel usa `python -m build` (opcional de desenvolvimento). Esses comandos validam o pacote **na branch que contém P0-01**; não iniciam o Desktop ou Server. A execução da CI ficará para o módulo P0-05.
+
 ## Documentação
 
 ### **[Abrir o Mapa Mestre — org/README.md](org/README.md)**
@@ -30,4 +46,4 @@ Este é o **ponto de entrada da documentação**: apresenta os conceitos de IA/L
 
 **A documentação central fica em `org/`.** As pastas de desenvolvimento criadas em `src/`, `frontend-server/`, `tests/`, `scripts/`, `config/`, `examples/`, `assets/` e `.github/` também possuem `README.md` próprios para orientar futuras implementações. [Consultar a árvore completa](org/06-desenvolvimento/01-mapa-de-pastas.md).
 
-> **Status:** documentação e desenho de arquitetura; **o software multiagente ainda não foi implementado**. Revisão: 19/10/2026. Consulte documentação oficial [DeepSeek](https://api-docs.deepseek.com/) e [xAI/Grok](https://docs.x.ai/developers) para versões, preços e condições de API.
+> **Status:** arquitetura documentada; P0-01 introduz apenas o pacote Python base, **sem software multiagente funcional**. Revisão: 19/10/2026. Consulte documentação oficial [DeepSeek](https://api-docs.deepseek.com/) e [xAI/Grok](https://docs.x.ai/developers) para versões, preços e condições de API.

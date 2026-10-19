@@ -2,7 +2,7 @@
 
 > [← Mapa Mestre](../org/README.md) · [↑ Pasta pai](../README.md) · [Guia técnico](../org/06-desenvolvimento/README.md)
 
-**Status: apenas arquivos Markdown; nenhuma funcionalidade implementada.**
+**Estado P0-01:** testes de bootstrap do pacote Python adicionados em [unit/test_package_bootstrap.py](unit/test_package_bootstrap.py); a aplicação multiagente ainda não possui testes funcionais.
 
 ## Propósito
 
@@ -14,7 +14,7 @@ Unitários, integração, ponta a ponta, segurança e OS.
 
 ## Restrições
 
-Sem testes funcionais implantados.
+`python -m pytest` valida apenas o pacote-base. Testes de orquestração, políticas, integrações e GUI continuam pendentes. CI específica do projeto está planejada para P0-05.
 
 ## Validação futura
 

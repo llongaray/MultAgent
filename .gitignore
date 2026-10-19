@@ -1,0 +1,27 @@
+# Python/build
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local environments and IDEs
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+
+# Sensitive files / local state
+*.pem
+*.key
+*.p12
+*.sqlite3
+*.db
