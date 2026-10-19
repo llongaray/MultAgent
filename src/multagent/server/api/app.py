@@ -3,7 +3,8 @@ from __future__ import annotations
 
 import hmac
 from pathlib import Path
-from uuid import uuid4\nfrom urllib.parse import urlsplit
+from uuid import uuid4
+from urllib.parse import urlsplit
 from typing import Any
 
 from fastapi import Cookie, Depends, FastAPI, Header, HTTPException, Request, Response
@@ -48,7 +49,8 @@ def create_app(config: dict[str, Any], store: SQLiteStore | None = None) -> Fast
     async def security_headers(request: Request, call_next: Any) -> Response:
         host = request.headers.get("host", "")
         host_name = host.split(":")[0].strip("[]").lower()
-        allowed = {str(config.get("bind", "127.0.0.1")).strip("[]").lower(), "127.0.0.1", "localhost", "::1", "testserver"}\n        allowed.update(str(h).lower() for h in config.get("allowed_hosts", []))
+        allowed = {str(config.get("bind", "127.0.0.1")).strip("[]").lower(), "127.0.0.1", "localhost", "::1", "testserver"}
+        allowed.update(str(h).lower() for h in config.get("allowed_hosts", []))
         if host_name not in allowed:
             return Response("Unrecognized host", status_code=400)
         response: Response = await call_next(request)
