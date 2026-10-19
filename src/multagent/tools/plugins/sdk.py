@@ -18,4 +18,5 @@ class PluginResult:
 class Plugin(Protocol):
     name: str
     version: str
-    def run(self, context: PluginContext, args: dict[str, Any]) -> PluginResult: ...
+    def run(self, context: PluginContext, args: dict[str, Any]) -> PluginResult:
+        ...
