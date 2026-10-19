@@ -23,6 +23,7 @@
 7. [Etapas de implementação, testes e critérios de aceite](07-plano-de-implementacao.md).
 8. [Exemplos de configuração, papéis de agentes e políticas](08-configuracao-e-perfis.md).
 9. [Distribuição Windows/Linux, CLI e instalação pelo terminal](../04-distribuicao/README.md).
+10. [Desktop GUI nativa vs Server HTTP: separação do núcleo](09-desktop-server-core-compartilhado.md).
 
 ## Documentação específica dos provedores
 
@@ -42,17 +43,18 @@
 
 ## Stack e distribuição base do MVP
 
-- **Backend/orquestrador:** Python 3.12+ e FastAPI, empacotados para Windows/Linux.
-- **Interface:** React + TypeScript/Vite, compilada e servida pelo backend local no navegador.
+- **Motor compartilhado:** Python 3.12+ para orquestração, modelos DeepSeek/Grok, MCP, armazenamento e regras.
+- **Desktop GUI (Windows 10/11, Ubuntu/Debian):** PySide6/Qt Widgets com janela **nativa**, sem FastAPI, React ou porta HTTP.
+- **Server (Windows/Linux Server):** FastAPI/Uvicorn headless; porta/bind configuráveis na instalação; painel React+TypeScript servidos por HTTP apenas aqui.
 - **Persistência:** SQLite por padrão (instalação única), com PostgreSQL como evolução opcional para servidor/multiusuário.
-- **CLI:** entrypoint `multagent` com `start`, `status`, `stop` (modo background), `update`, `doctor`; **ainda não implementados**.
-- **Execução:** processo foreground inicialmente; workers assíncronos controlados; execução em background/auto-start é recurso opt-in posterior.
+- **Duas CLIs:** `multagent` abre GUI Desktop; `multagent-server init/start/status/logs` gerencia edição Server. Ainda não implementadas.
+- **Execução:** GUI Qt integra workers de agentes sem bloquear a janela; Server executa processos/serviços headless e workers. Auto-start do Server é opt-in.
 - **MCP:** cliente local controlado pelo backend; proxy remoto autenticado apenas quando permitido.
 - **Observabilidade:** logs JSON, custo por provider e métricas de falhas.
-- **Distribuição:** releases públicas verificáveis por SO/arquitetura, instalação via shell/PowerShell, sem exigir Python/Node/Docker no caminho do usuário final; Docker opcional para desenvolvimento/servidor.
+- **Distribuição:** **duas edições empacotadas separadamente** nas releases públicas por SO/arquitetura, instalação via shell/PowerShell, sem Python/Node/Docker pré-instalados no caminho binário; Docker opcional para Server.
 - **Tauri:** não faz parte do MVP; poderá ser interface alternativa no futuro.
 
-Veja [instalação e execução](../04-distribuicao/01-instalacao-cli.md) e [governança open-source](../04-distribuicao/02-licenca-e-contribuicoes.md).
+Veja [Desktop vs Server](../04-distribuicao/04-edicoes-desktop-server.md), [instalação e execução](../04-distribuicao/01-instalacao-cli.md) e [governança open-source](../04-distribuicao/02-licenca-e-contribuicoes.md).
 
 O desenho é **incremental**: primeiro prova de conceito sem ferramentas destrutivas, depois multiagentes e, por último, ferramentas externas e escala.
 
