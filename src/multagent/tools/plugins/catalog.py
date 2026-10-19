@@ -7,7 +7,8 @@ from pathlib import Path
 import re
 import shutil
 
-class PluginDenied(PermissionError):pass
+class PluginDenied(PermissionError):
+    pass
 
 @dataclass(frozen=True)
 class PluginManifest:
@@ -37,7 +38,8 @@ class PluginCatalog:
         self.root.mkdir(parents=True,exist_ok=True)
 
     def install(self,manifest:PluginManifest,source:Path,*,approved:bool=False)->Path:
-        if not approved:raise PluginDenied("Plugin installation must be approved")
+        if not approved:
+            raise PluginDenied("Plugin installation must be approved")
         manifest.validate()
         source=Path(source).resolve(strict=True)
         if not source.is_file() or source.stat().st_size>10_000_000:
@@ -46,7 +48,8 @@ class PluginCatalog:
         if hashlib.sha256(contents).hexdigest().lower()!=manifest.sha256.lower():
             raise PluginDenied("Artifact checksum mismatch")
         target=self.root/manifest.name/manifest.version
-        if target.exists():raise FileExistsError("Pinned version already installed")
+        if target.exists():
+            raise FileExistsError("Pinned version already installed")
         target.mkdir(parents=True,exist_ok=False)
         try:
             (target/"artifact.bin").write_bytes(contents)
@@ -58,12 +61,14 @@ class PluginCatalog:
             raise
 
     def remove(self,name:str,version:str,*,approved:bool=False)->None:
-        if not approved:raise PluginDenied("Removal requires user approval")
+        if not approved:
+            raise PluginDenied("Removal requires user approval")
         # Apply the same strict path validation as installation to avoid traversal.
         if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{1,63}",name) or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:-[a-zA-Z0-9.-]+)?",version):
             raise ValueError("Invalid plugin identity")
         target=self.root/name/version
-        if not target.is_dir():raise FileNotFoundError("Plugin not installed")
+        if not target.is_dir():
+            raise FileNotFoundError("Plugin not installed")
         shutil.rmtree(target)
 
     def execute(self,*args:object,**kwargs:object)->None:
