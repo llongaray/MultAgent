@@ -6,7 +6,8 @@ from urllib.parse import quote
 from typing import Any
 from multagent.resources import ResourceManager
 
-class ForgeDenied(PermissionError):pass
+class ForgeDenied(PermissionError):
+    pass
 
 class RemoteForge:
     ENDPOINTS={"github":("github.com","https://api.github.com"),
@@ -22,29 +23,39 @@ class RemoteForge:
     def _resource(self, ws: str, principal: str, rid: str, action: str) -> str:
         r=self.resources.require(workspace_id=ws,principal_id=principal,resource_id=rid,action=action)
         host=self.ENDPOINTS[self.kind][0]
-        if r.kind!="git":raise ForgeDenied("Git repository grant required")
+        if r.kind!="git":
+            raise ForgeDenied("Git repository grant required")
         match=re.fullmatch(r"https://"+re.escape(host)+r"/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+?)(?:\.git)?/?",r.locator)
-        if not match:raise ForgeDenied("Repository host/path not authorized")
+        if not match:
+            raise ForgeDenied("Repository host/path not authorized")
         return match.group(1)+"/"+match.group(2)
 
     def _request(self, verb: str, route: str, payload: dict[str,Any]|None=None)->Any:
         key=self.vault.get(self.credential_ref)
-        if not key:raise ForgeDenied("Missing credential")
-        if self.http_factory:client=self.http_factory(timeout=20)
+        if not key:
+            raise ForgeDenied("Missing credential")
+        if self.http_factory:
+            client=self.http_factory(timeout=20)
         else:
-            try:import httpx
-            except ImportError as exc:raise RuntimeError("Install multagent[forges]") from exc
+            try:
+                import httpx
+            except ImportError as exc:
+                raise RuntimeError("Install multagent[forges]") from exc
             client=httpx.Client(timeout=20,follow_redirects=False)
         headers={"Accept":"application/json"}
-        if self.kind=="gitlab":headers["PRIVATE-TOKEN"]=key
-        else:headers["Authorization"]="Bearer "+key
+        if self.kind=="gitlab":
+            headers["PRIVATE-TOKEN"]=key
+        else:
+            headers["Authorization"]="Bearer "+key
         with client as session:
             reply=session.request(verb,self.ENDPOINTS[self.kind][1]+route,headers=headers,json=payload)
-            if reply.status_code>=400:raise RuntimeError("Forge returned HTTP "+str(reply.status_code))
+            if reply.status_code>=400:
+                raise RuntimeError("Forge returned HTTP "+str(reply.status_code))
             return reply.json()
 
     def branches(self, ws: str, principal: str, rid: str, *, approved_network: bool=False)->Any:
-        if not approved_network:raise ForgeDenied("Remote read not approved")
+        if not approved_network:
+            raise ForgeDenied("Remote read not approved")
         repo=self._resource(ws,principal,rid,"read")
         route=("/repos/"+repo+"/branches" if self.kind=="github" else
               "/projects/"+quote(repo,safe="")+"/repository/branches" if self.kind=="gitlab" else
@@ -53,9 +64,11 @@ class RemoteForge:
 
     def create_pr(self, ws: str, principal: str, rid: str, title: str, head: str, base: str,
                   *, approved_write: bool=False)->Any:
-        if not approved_write:raise ForgeDenied("Write requires explicit user approval")
+        if not approved_write:
+            raise ForgeDenied("Write requires explicit user approval")
         repo=self._resource(ws,principal,rid,"write")
-        if not title.strip() or len(title)>200:raise ValueError("Invalid PR title")
+        if not title.strip() or len(title)>200:
+            raise ValueError("Invalid PR title")
         for value in (head,base):
             if not re.fullmatch(r"[A-Za-z0-9._/-]{1,128}",value) or ".." in value or value.startswith("-"):
                 raise ValueError("Invalid branch")
@@ -70,16 +83,21 @@ class RemoteForge:
 
     def issues(self, ws: str, principal: str, rid: str, *, approved_network: bool = False) -> Any:
         """Fetch only issues visible within the explicitly scoped repository."""
-        if not approved_network: raise ForgeDenied("Network read requires approval")
+        if not approved_network:
+            raise ForgeDenied("Network read requires approval")
         repo = self._resource(ws, principal, rid, "read")
-        if self.kind == "github": endpoint = "/repos/" + repo + "/issues"
-        elif self.kind == "gitlab": endpoint = "/projects/" + quote(repo, safe="") + "/issues"
-        else: endpoint = "/repositories/" + repo + "/issues"
+        if self.kind == "github":
+            endpoint = "/repos/" + repo + "/issues"
+        elif self.kind == "gitlab":
+            endpoint = "/projects/" + quote(repo, safe="") + "/issues"
+        else:
+            endpoint = "/repositories/" + repo + "/issues"
         return self._request("GET", endpoint)
 
     def create_branch(self, ws: str, principal: str, rid: str, branch: str,
                       from_branch: str = "main", *, approved_write: bool = False) -> Any:
-        if not approved_write: raise ForgeDenied("Explicit approval required to create branches")
+        if not approved_write:
+            raise ForgeDenied("Explicit approval required to create branches")
         if self.kind != "github":
             raise NotImplementedError("Branch mutation is currently only implemented for GitHub")
         repo = self._resource(ws, principal, rid, "write")
@@ -97,7 +115,8 @@ class RemoteForge:
                     content: bytes, branch: str, message: str, *,
                     expected_blob_sha: str | None = None, approved_write: bool = False) -> Any:
         """GitHub Contents API, no force pushes, explicit branch + optional blob lease."""
-        if not approved_write: raise ForgeDenied("File commits require explicit approval")
+        if not approved_write:
+            raise ForgeDenied("File commits require explicit approval")
         if self.kind != "github":
             raise NotImplementedError("Commit mutation is currently only implemented for GitHub")
         repo = self._resource(ws, principal, rid, "write")
@@ -113,5 +132,6 @@ class RemoteForge:
             "message": message, "branch": branch,
             "content": base64.b64encode(content).decode("ascii")
         }
-        if expected_blob_sha: payload["sha"] = expected_blob_sha
+        if expected_blob_sha:
+            payload["sha"] = expected_blob_sha
         return self._request("PUT", "/repos/" + repo + "/contents/" + quote(path, safe="/"), payload)
