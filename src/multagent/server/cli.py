@@ -40,7 +40,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     try:
         config = load(args.config)
-    except (ValueError, OSError) as exc:
+    except (ValueError, OSError):
         print("Server not initialized or configuration invalid", file=sys.stderr)
         return 1
     if args.command in ("doctor", "status"):
