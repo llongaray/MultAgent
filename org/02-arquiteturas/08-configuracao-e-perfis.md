@@ -47,6 +47,32 @@ multagent:
 
 **Aplicação:** `multagent` abre GUI Desktop sem navegador/porta HTTP. `multagent-server init` define porta/bind e `multagent-server start` publica o painel do Server com autenticação. Consulte [editions](../04-distribuicao/04-edicoes-desktop-server.md) e [instalação](../04-distribuicao/01-instalacao-cli.md).
 
+## Recursos e políticas por funcionário
+
+Além do modelo de IA, cada funcionário terá **papel**, `supervisor_id`, `team_id`, `workspace_ids`, `allowed_tools` e `PermissionGrant` persistidos e validados pelo backend. O usuário poderá selecionar repositório Git local/remoto, host SSH, app instalado ou integração MCP por agente, com modo de autonomia e políticas de aprovação independentes do modelo. Um agente subordinado jamais herda permissão ilimitada do supervisor. Veja [hierarquia](10-hierarquia-processos-e-politicas.md), [acesso à máquina](11-acesso-maquina-e-isolamento.md) e [integrações](../05-integracoes/README.md).
+
+### Exemplo de grants por agente (apenas contrato ilustrativo)
+
+```yaml
+employee:
+  name: "Dev Backend"
+  role: coder
+  supervisor_id: team-lead-01
+  provider: grok
+  model: grok-build-0.1
+  autonomy: execute_scoped
+  grants:
+    - resource: repo-local-001
+      permissions: [repo.read, repo.patch]
+      branch_pattern: feature/*
+    - resource: tools-tests-001
+      permissions: [process.run]
+      commands: [pytest]
+  requires_approval: [repo.commit, repo.push, os.privileged.request]
+```
+
+Não incluir chaves, tokens ou senha de administrador neste contrato.
+
 ## Perfis de agentes
 
 ```yaml
