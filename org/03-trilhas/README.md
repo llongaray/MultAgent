@@ -25,6 +25,13 @@ Esta área oferece percursos de leitura sem obrigar a percorrer dezenas de arqui
 5. [Roadmap de implementação](../02-arquiteturas/07-plano-de-implementacao.md).
 6. [Checklist de evolução](01-checklist-de-evolucao.md).
 
+## Quero instalar ou distribuir no Windows/Linux
+
+1. [Visão geral da distribuição](../04-distribuicao/README.md).
+2. [CLI `multagent`, atalho e empacotamento](../04-distribuicao/01-instalacao-cli.md).
+3. [Licenciamento e pull requests](../04-distribuicao/02-licenca-e-contribuicoes.md).
+4. [Releases públicas e integridade](../04-distribuicao/03-releases-e-estrutura.md).
+
 ## Quero revisar segurança antes de produção
 
 - [DeepSeek operação](../01-provedores/deepseek/08-producao-e-troubleshooting.md).
