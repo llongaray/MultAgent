@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import asdict
 from datetime import datetime
 from multagent.core.domain import PermissionGrant, Resource
-from multagent.security.permissions import AccessDenied, PolicyEngine
+from multagent.security.permissions import PolicyEngine
 from multagent.storage.sqlite import SQLiteStore
 
 
