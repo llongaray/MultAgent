@@ -28,9 +28,10 @@ Esta área oferece percursos de leitura sem obrigar a percorrer dezenas de arqui
 ## Quero instalar ou distribuir no Windows/Linux
 
 1. [Visão geral da distribuição](../04-distribuicao/README.md).
-2. [CLI `multagent`, atalho e empacotamento](../04-distribuicao/01-instalacao-cli.md).
-3. [Licenciamento e pull requests](../04-distribuicao/02-licenca-e-contribuicoes.md).
-4. [Releases públicas e integridade](../04-distribuicao/03-releases-e-estrutura.md).
+2. [Desktop PySide6 nativo e Server com FastAPI](../04-distribuicao/04-edicoes-desktop-server.md).
+3. [CLIs `multagent` e `multagent-server`, instalação, atalhos](../04-distribuicao/01-instalacao-cli.md).
+4. [Licenciamento e pull requests](../04-distribuicao/02-licenca-e-contribuicoes.md).
+5. [Releases públicas e integridade](../04-distribuicao/03-releases-e-estrutura.md).
 
 ## Quero revisar segurança antes de produção
 
