@@ -15,6 +15,12 @@ def test_password_hash_and_safe_server_configuration(tmp_path):
     initialize(config, "very long test password", 8989)
     assert load(config)["port"] == 8989
     assert "very long test password" not in config.read_text()
+    with pytest.raises(ValueError):
+        initialize(tmp_path / "remote.json", "very long test password", bind="0.0.0.0",
+                   tls_cert="server.crt", tls_key="server.key")
+    initialize(tmp_path / "remote.json", "very long test password", bind="0.0.0.0",
+               tls_cert="server.crt", tls_key="server.key", allowed_hosts=("server.example",))
+    assert load(tmp_path / "remote.json")["allowed_hosts"] == ["server.example"]
     with pytest.raises(FileExistsError):
         initialize(config, "another long password 123")
 
