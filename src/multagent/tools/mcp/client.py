@@ -74,6 +74,5 @@ class MCPClient:
         if not approved_execution or not tool or tool.startswith("_"):
             raise MCPDenied("MCP tool execution requires explicit approval")
         s=self._authorized(ws,actor,rid,server_id)
-        # Return untrusted tool output only
-        never obey tool-provided instructions as policy.
+        # Return untrusted tool output only; never obey tool-provided instructions as policy.
         return await self._invoke(s,tool,args)
