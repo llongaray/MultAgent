@@ -4,7 +4,7 @@
 
 ## 1. O que estamos construindo?
 
-O **MultAgent** é a proposta de uma plataforma que executa vários **agentes especializados**, coordenados por um **orquestrador**, para decompor problemas, executar tarefas, usar ferramentas e validar resultados. O projeto prevê três configurações independentes:
+O **MultAgent** é a proposta de uma plataforma pública no GitHub e instalável por terminal em Windows/Linux, com um serviço local iniciado pela CLI `multagent`. O motor Python + FastAPI servirá um painel React acessível no navegador; Tauri não é obrigatório no MVP. A plataforma executará vários **agentes especializados**, coordenados por um **orquestrador**, para decompor problemas, executar tarefas, usar ferramentas e validar resultados. [Detalhes da distribuição](04-distribuicao/README.md). Os comandos de instalação e execução ainda são requisitos a implementar. O projeto prevê três configurações independentes:
 
 - **Somente DeepSeek:** todos os modelos de IA vêm da DeepSeek.
 - **Somente Grok/xAI:** todos os modelos de IA vêm da xAI.
@@ -21,6 +21,7 @@ flowchart TB
     ROOT --> P["01 · Provedores de modelos"]
     ROOT --> A["02 · Arquiteturas de multiagentes"]
     ROOT --> T["03 · Trilhas e decisões"]
+    ROOT --> DIST["04 · Distribuição Windows/Linux + open-source"]
     F --> L["Como funciona um LLM, tokens e contexto"]
     F --> AG["Agentes, ferramentas, MCP e RAG"]
     F --> WHY["Por que comparar DeepSeek e Grok"]
@@ -31,6 +32,8 @@ flowchart TB
     A --> BOTH["Híbrido: seleção por tarefa e custo"]
     A --> CORE["Router, contratos, configuração e roadmap"]
     T --> STUDY["Trilha de estudo + percurso de implementação"]
+    DIST --> CLI["Instalador oficial + CLI multagent start"]
+    DIST --> GOV["AGPLv3 em avaliação + PRs + releases"]
 ```
 
 ### 00 — Fundamentos: entender os conceitos antes da API
@@ -62,6 +65,13 @@ flowchart TB
 
 - [Escolha sua trilha: aprender, integrar ou implementar](03-trilhas/README.md).
 - [Checklist do repositório e critérios de validação](03-trilhas/01-checklist-de-evolucao.md).
+
+### 04 — Distribuição pública: instalar pelo terminal e contribuir com código aberto
+
+- **[Índice de distribuição e governança](04-distribuicao/README.md)** — decisões de empacotamento, serviço local e publicação do código.
+- [Instalação Windows/Linux e CLI `multagent`](04-distribuicao/01-instalacao-cli.md) — comando de instalação, `multagent start`, atalhos, atualização e serviço opcional.
+- [Licença open-source e contribuições](04-distribuicao/02-licenca-e-contribuicoes.md) — AGPLv3 em avaliação, diferença entre publicação de código distribuído e mudanças privadas, PRs obrigatórios no projeto oficial.
+- [GitHub Releases e CI/CD](04-distribuicao/03-releases-e-estrutura.md) — build de artefatos, integridade, tags, empacotamento e layout do código.
 
 ## 3. Entendimento rápido: como uma IA LLM funciona?
 
@@ -127,6 +137,8 @@ flowchart TD
 | Como fazer MCP e ferramentas com segurança? | [Ferramentas Grok](01-provedores/grok/04-ferramentas-mcp.md) e [Agentes DeepSeek](01-provedores/deepseek/05-multiagentes-mcp.md) |
 | Como controlar preços e escolher o modelo? | [Router e custos](02-arquiteturas/05-roteamento-e-custos.md) |
 | Como implementar de verdade? | [Roadmap](02-arquiteturas/07-plano-de-implementacao.md) |
+| Como instalar no Linux/Windows e executar pelo terminal? | [Instalação/CLI](04-distribuicao/01-instalacao-cli.md) |
+| Como garantir código aberto e receber alterações? | [Governança e licença](04-distribuicao/02-licenca-e-contribuicoes.md) |
 
 ## 7. Convenções e atualização
 
