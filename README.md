@@ -74,7 +74,7 @@ Ative o ambiente virtual apropriado ao seu terminal:
 
 | Sistema | Comando |
 | --- | --- |
-| Windows PowerShell | ` .\.venv\Scripts\Activate.ps1 ` |
+| Windows PowerShell | `.\.venv\Scripts\Activate.ps1` |
 | Linux (bash/zsh) | `source .venv/bin/activate` |
 
 > Se preferir não usar ambiente virtual, execute os comandos `python -m pip` diretamente em um ambiente Python isolado de sua escolha.
@@ -185,7 +185,7 @@ A CI executa combinações Python 3.11/3.13 em Ubuntu/Windows, smoke Qt com Pyth
 | --- | --- |
 | [Mapa mestre](org/README.md) | Índice completo para navegar pelos documentos técnicos |
 | [Fundamentos de multiagentes](org/00-fundamentos/README.md) | LLM, agentes, ferramentas, tokens e RAG |
-| [Provedores](org/01-provedores/README.md) | Integração DeepSeek e Grok/xAI |
+| [DeepSeek](org/01-provedores/deepseek/README.md) · [Grok/xAI](org/01-provedores/grok/README.md) | Configuração, API e documentação de cada provedor |
 | [Arquitetura](org/02-arquiteturas/README.md) | Router, domínio, políticas, delegação e topologia |
 | [Desktop e Server](org/04-distribuicao/04-edicoes-desktop-server.md) | Diferenças, instalação e implantação |
 | [Integrações](org/05-integracoes/README.md) | Git, SSH, MCP, plugins, skills e autorização |
