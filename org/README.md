@@ -14,6 +14,8 @@ O **MultAgent** é a proposta de uma plataforma pública no GitHub, instalável 
 
 O **agente** não é apenas um nome de modelo: é a união de um LLM, objetivos/instruções, contexto, memória controlada, permissões para ferramentas e um ciclo de execução supervisionado. O **multiagente** é a coordenação de vários desses papéis com comunicação mediada pelo sistema.
 
+**[Implementação P5–P8: quadro de funções e limitações](07-p5-p8-implementacao.md)** — edição Server, workspaces, GitHub/GitLab/Bitbucket/SSH, MCP, plugins e skills; separa implementado de pendências de infraestrutura, execução e OAuth.
+
 ## 2. Como ler este mapa (a árvore completa)
 
 ```mermaid
