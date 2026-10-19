@@ -17,7 +17,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--bind", default="127.0.0.1")
     parser.add_argument("--tls-cert")
-    parser.add_argument("--tls-key")
+    parser.add_argument("--tls-key")\n    parser.add_argument("--allowed-host", action="append", default=[], help="Explicit TLS hostname/IP allowed for remote clients")
     args = parser.parse_args(argv)
     if args.command == "version":
         print(__version__)
@@ -33,7 +33,7 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         try:
             initialize(args.config, password, args.port, args.bind,
-                       tls_cert=args.tls_cert, tls_key=args.tls_key)
+                       tls_cert=args.tls_cert, tls_key=args.tls_key, allowed_hosts=tuple(args.allowed_host))
         except (ValueError, OSError) as exc:
             print("Initialization rejected:", type(exc).__name__, file=sys.stderr)
             return 1
