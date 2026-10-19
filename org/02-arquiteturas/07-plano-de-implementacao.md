@@ -10,6 +10,8 @@
 - [x] Documentação Grok independente.
 - [x] Projeto lógico dos modos `deepseek_only`, `grok_only` e `hybrid`.
 - [x] Documentada decisão: **duas edições** — Desktop em PySide6/Qt (GUI sem HTTP) e Server em FastAPI + React (rede configurável); núcleo Python compartilhado e releases públicas.
+- [x] Formalizada a **missão**: organizar funcionários/agentes em hierarquia para trabalhos em repositórios, aplicativos, hosts SSH e integrações MCP/plugins/skills.
+- [x] Criada a documentação do [catálogo de integrações](../05-integracoes/README.md) e do [controle de acesso à máquina](11-acesso-maquina-e-isolamento.md).
 - [ ] Definir licença final do repositório (AGPLv3 em avaliação) e validar compatibilidade das dependências.
 - [ ] Aprovar stack, requisitos, categorias de dados e responsabilidades do produto.
 - [ ] Confirmar chaves e acesso real aos modelos (sem salvar chaves neste repo).
@@ -22,7 +24,8 @@
 - [ ] Construir **MultAgent Desktop**: entrada `multagent` e janela PySide6/Qt, abas Integrações/Configurações/Funcionários/Execuções/Logs, **sem FastAPI local**.
 - [ ] Construir **MultAgent Server**: entrada `multagent-server` com `init` (porta/bind) e `start`, FastAPI `POST /runs` e `GET /runs/{id}` com autenticação, painel React/TypeScript acessível pela rede autorizada.
 - [ ] Garantir compartilhamento do core Python entre as interfaces e ausência de importação Qt na edição Server.
-- [ ] Schemas Pydantic, estados de run e SQLite local por padrão, com migrações seguras.
+- [ ] Schemas Pydantic para Agent, Team, Workflow, Workspace, PermissionGrant, IntegrationInstance e Run; estados e SQLite local por padrão, com migrações seguras.
+- [ ] Criar UI para relacionar agente a supervisor, repositório/projeto autorizado, modelo, autonomia, tools e budget.
 - [ ] Configurar cofre seguro de chaves por SO (Windows Credential Manager; Linux Secret Service/KWallet ou vault protegido).
 - [ ] DeepSeekAdapter e GrokAdapter para texto (interface `ModelProvider`).
 - [ ] Configuração de modelo e modo via ambiente/YAML validado.
@@ -41,9 +44,13 @@
 
 **Aceite:** no mínimo três agentes colaboram em tarefa de teste, com resposta consolidada auditável.
 
-## Fase 3 — Ferramentas e MCP
+## Fase 3 — Workspaces, Git, SSH e ferramentas MCP
 
-- [ ] Tool Gateway com allowlist/schema/tenant/approval.
+- [ ] Resource Manager + Tool Gateway com grants por agente/recurso, allowlist/schema/tenant/approval.
+- [ ] Git workspace local: worktree, read, patch, testes em sandbox, diff e aprovação de commit.
+- [ ] GitHub App com seleção de repositórios; GitLab e Bitbucket via métodos autorizados.
+- [ ] SSH com host-key verification, conta mínima, diretórios e comandos autorizados.
+- [ ] Catálogo pesquisável via MCP Registry; instalação guiada de integrações OAuth, plugins e skills com quarentena e revisão.
 - [ ] Cliente MCP local e testes contra MCP fictício.
 - [ ] Grok MCP remoto opt-in; validar URLs, credenciais, políticas e riscos.
 - [ ] DeepSeek Function Calling com loop de execução controlado.
@@ -52,7 +59,15 @@
 
 **Aceite:** chamadas autorizadas são executadas uma única vez; proibidas bloqueadas e registradas.
 
-## Fase 4 — Segurança e produção
+## Fase 4 — Automação de apps e broker privilegiado (após infraestrutura de segurança)
+
+- [ ] Automação de apps Desktop por API, MCP ou UI Automation/AT-SPI, com janela/aplicativo explicitamente autorizados.
+- [ ] Implementar broker administrativo isolado para **operações determinadas** após autenticação/aprovação, com prazo e auditoria; não rodar os modelos/orquestrador sempre com root/Administrator.
+- [ ] Revisar segurança de plugins executáveis, bloqueio de exfiltração, rollback e testes adversariais.
+
+**Aceite:** Desktop controla somente apps permitidos na sessão gráfica; operações privilegiadas não podem ser disparadas fora do escopo do broker.
+
+## Fase 5 — Segurança, empacotamento e produção
 
 - [ ] Criar instaladores shell/PowerShell oficiais com parâmetro de **edição** e builds **Desktop** e **Server** separados por Windows/Linux, releases e verificações de integridade.
 - [ ] Instalação sem runtime de desenvolvimento; testes Desktop em Windows 10/11 e Ubuntu/Debian com GUI sem abrir porta; Server em Linux/Windows headless com configuração de porta, autenticação e acesso controlado; criação de atalhos e preservação de dados em updates.
@@ -81,7 +96,7 @@ Os alvos são **propostas**, e o throughput/latência real dependem de chave, re
 
 ## Próximas decisões pendentes
 
-Antes de iniciar código: definir licença, perfis iniciais de agentes, limites de custo e retenção, matriz mínima de Windows/Linux suportados e critérios de aceitação do instalador. **Desktop nativo e Server headless são ambos edições previstas**; servidor não é substituto da interface Desktop. Ver [editions](../04-distribuicao/04-edicoes-desktop-server.md) e [arquitetura compartilhada](09-desktop-server-core-compartilhado.md). Veja [guia de distribuição](../04-distribuicao/README.md). Sem isso, o MVP pode implementar recursos desnecessários.
+Antes de iniciar código: definir licença, perfis iniciais de agentes, políticas de acesso ao PC e hierarquia, limites de custo e retenção, matriz mínima de Windows/Linux suportados e critérios de aceitação do instalador. Veja o [roadmap funcional e incremental](../05-integracoes/05-caminho-de-implementacao.md). **Desktop nativo e Server headless são ambos edições previstas**; servidor não é substituto da interface Desktop. Ver [editions](../04-distribuicao/04-edicoes-desktop-server.md) e [arquitetura compartilhada](09-desktop-server-core-compartilhado.md). Veja [guia de distribuição](../04-distribuicao/README.md). Sem isso, o MVP pode implementar recursos desnecessários.
 
 
 ---
