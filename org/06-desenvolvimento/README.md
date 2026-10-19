@@ -10,6 +10,7 @@
 - [Contratos e limites dos módulos](02-contratos-e-dependencias.md)
 - [Regras de documentação e contribuições futuras](03-padroes-de-documentacao.md)
 - [Critérios de aceite e evolução por etapas](04-validacao-e-aceite.md)
+- **[Fluxo obrigatório de PRs e prioridades P0, P1, P2...](05-fluxo-de-prs-e-prioridades.md)** — matriz modular, dependências e revisão.
 
 ## Produtos do mesmo repositório
 
@@ -17,6 +18,6 @@
 - **Server**: binário headless Windows/Linux com FastAPI, porta configurável, autenticação e painel React.
 - **Core Python**: workflows hierárquicos, provedores DeepSeek/Grok, agentes, Git/SSH, MCP e políticas compartilhados.
 
-Cada diretório da futura implementação terá um `README.md` com propósito, módulos previstos, limites de responsabilidade e testes. Criar código executável somente nas próximas fases aprovadas.
+Cada diretório da futura implementação terá um `README.md` com propósito, módulos previstos, limites de responsabilidade e testes. Criar código executável somente nas próximas fases aprovadas, **sempre por PR de módulo priorizado P0 → P1 → P2...**. [CONTRIBUTING](../../CONTRIBUTING.md).
 
 **Consulte:** [Arquitetura](../02-arquiteturas/README.md) · [Integrações](../05-integracoes/README.md) · [Distribuição](../04-distribuicao/README.md).

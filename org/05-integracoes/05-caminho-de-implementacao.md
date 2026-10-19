@@ -2,7 +2,7 @@
 
 > [← Mapa Mestre](../README.md) · [↑ Integrações](README.md) · [Roadmap técnico geral](../02-arquiteturas/07-plano-de-implementacao.md)
 
-**Status: planejamento.** Esta sequência separa entregar valor do usuário cedo de habilitar acesso de alto risco antes de existir isolamento/controle de permissões.
+**Status: planejamento.** Quando iniciarmos código, cada módulo será entregue via [PR separado, priorizado P0 → P1 → P2...](../06-desenvolvimento/05-fluxo-de-prs-e-prioridades.md). Esta sequência separa entregar valor do usuário cedo de habilitar acesso de alto risco antes de existir isolamento/controle de permissões.
 
 ## Marco 0 — Definir e testar os contratos do produto
 

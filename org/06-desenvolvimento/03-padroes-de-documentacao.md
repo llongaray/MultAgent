@@ -11,6 +11,10 @@
 - Uma pasta no Git deve conter ao menos um arquivo. O `README.md` já cumpre essa função, sem `.gitkeep` adicional.
 - Não publicar arquivos `.env`, segredos de OAuth, chaves de API ou hosts/arquivos de usuários no repositório.
 
+## Desenvolvimento exclusivamente via PR por prioridade
+
+Novos módulos e alterações de código passam por **branch e PR próprios**, com nomenclatura `P0`, `P1`, `P2`... e dependências declaradas, conforme [guia de prioridades](05-fluxo-de-prs-e-prioridades.md) e [CONTRIBUTING](../../CONTRIBUTING.md). Não fazer implementação diretamente na `main` nem reunir vários módulos independentes em PR monolítico.
+
 ## Organização de commits quando houver código
 
 Mudanças no núcleo devem atualizar contratos e testes; mudanças na CLI devem alterar os guias de distribuição; novos plugins exigem permissões documentadas e avaliação de supply chain. Alterações aceitas no projeto oficial entram por Pull Request público, de acordo com a governança (não significa que todo fork privado deva publicar suas modificações).
