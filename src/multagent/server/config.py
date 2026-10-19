@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 import secrets
 from typing import Any
@@ -15,7 +16,7 @@ def config_path() -> Path:
 
 
 def initialize(path: Path, password: str, port: int = 8765, bind: str = "127.0.0.1", *,
-               tls_cert: str | None = None, tls_key: str | None = None) -> None:
+               tls_cert: str | None = None, tls_key: str | None = None,\n               allowed_hosts: tuple[str, ...] = ()) -> None:
     if not 1024 <= port <= 65535:
         raise ValueError("Unprivileged port required: 1024..65535")
     if bind not in ("127.0.0.1", "::1") and not (tls_cert and tls_key):
@@ -26,7 +27,7 @@ def initialize(path: Path, password: str, port: int = 8765, bind: str = "127.0.0
         raise FileExistsError("Server already initialized; config will not be overwritten")
     payload: dict[str, Any] = {
         "version": 1, "bind": bind, "port": port, "password_hash": hash_password(password),
-        "tls_cert": tls_cert, "tls_key": tls_key,
+        "tls_cert": tls_cert, "tls_key": tls_key, "allowed_hosts": list(allowed_hosts),
         "data_dir": str(path.parent / "data"),
     }
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -47,7 +48,7 @@ def load(path: Path) -> dict[str, Any]:
         raise ValueError("Unrecognized or invalid server configuration")
     bind = str(raw.get("bind", ""))
     port = int(raw.get("port", 0))
-    if bind not in ("127.0.0.1", "::1") and not (raw.get("tls_cert") and raw.get("tls_key")):
+    if bind not in ("127.0.0.1", "::1") and not (raw.get("tls_cert") and raw.get("tls_key") and raw.get("allowed_hosts")):
         raise ValueError("Refusing to expose Server HTTP without TLS")
     if not 1024 <= port <= 65535:
         raise ValueError("Invalid port")
