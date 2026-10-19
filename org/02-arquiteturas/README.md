@@ -24,6 +24,9 @@
 8. [Exemplos de configuração, papéis de agentes e políticas](08-configuracao-e-perfis.md).
 9. [Distribuição Windows/Linux, CLI e instalação pelo terminal](../04-distribuicao/README.md).
 10. [Desktop GUI nativa vs Server HTTP: separação do núcleo](09-desktop-server-core-compartilhado.md).
+11. [Hierarquia de funcionários, tarefas e política de delegação](10-hierarquia-processos-e-politicas.md).
+12. [Acesso à máquina, apps GUI, privilégios e isolamento](11-acesso-maquina-e-isolamento.md).
+13. [Git/SSH, catálogo MCP, plugins e skills](../05-integracoes/README.md).
 
 ## Documentação específica dos provedores
 
@@ -56,7 +59,9 @@
 
 Veja [Desktop vs Server](../04-distribuicao/04-edicoes-desktop-server.md), [instalação e execução](../04-distribuicao/01-instalacao-cli.md) e [governança open-source](../04-distribuicao/02-licenca-e-contribuicoes.md).
 
-O desenho é **incremental**: primeiro prova de conceito sem ferramentas destrutivas, depois multiagentes e, por último, ferramentas externas e escala.
+O objetivo é **automatizar trabalhos reais**, não somente conversar com modelos: agentes hierárquicos podem operar repositórios Git locais/remotos, aplicativos autorizados, SSH e ferramentas MCP/plugins/skills; veja [missão](../00-fundamentos/05-proposito-e-casos-de-uso.md) e [integrações](../05-integracoes/README.md).
+
+O desenho é **incremental**: primeiro provar agentes e escopos de recursos, depois workflows/workspaces Git e, por último, ferramentas externas, GUI automation e broker administrativo. Execução como root/Administrador **não é requisito de operação normal**: acesso privilegiado será via capacidade separada, autorizada e auditada.
 
 
 ---
