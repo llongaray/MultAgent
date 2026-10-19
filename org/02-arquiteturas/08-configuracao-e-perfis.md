@@ -43,9 +43,9 @@ multagent:
     require_approval_for_writes: true
 ```
 
-**Na distribuição para usuários finais, essa configuração será feita pelo painel React**, persistida no SQLite; o YAML aqui é somente modelo para desenvolvimento, provisionamento ou diagnóstico. O usuário terá abas **Integrações** (cadastrar/excluir/testar chaves DeepSeek e/ou Grok), **Configurações** (escolher `deepseek_only`, `grok_only` ou `hybrid`) e **Funcionários** (criar agentes, escolher provedor/modelo, ferramentas e permissões). A chave fica em vault do sistema; SQLite armazena apenas um identificador seguro da credencial. Alterações de modo devem suspender agentes com provedor desabilitado, sem trocá-los automaticamente; fallback exige aprovação/política explícita. O backend valida que os provedores atribuídos aos agentes estão habilitados no modo global.
+**Na distribuição Desktop, essa configuração será feita pela janela PySide6/Qt; na edição Server, pelo painel React autenticado**. Os dados e perfis são persistidos pelo mesmo serviço de domínio no SQLite inicial (e PostgreSQL opcional para Server); o YAML aqui é somente modelo para desenvolvimento, provisionamento ou diagnóstico. O usuário terá abas **Integrações** (cadastrar/excluir/testar chaves DeepSeek e/ou Grok), **Configurações** (escolher `deepseek_only`, `grok_only` ou `hybrid`) e **Funcionários** (criar agentes, escolher provedor/modelo, ferramentas e permissões). A chave fica em vault do sistema; SQLite armazena apenas um identificador seguro da credencial. Alterações de modo devem suspender agentes com provedor desabilitado, sem trocá-los automaticamente; fallback exige aprovação/política explícita. O backend valida que os provedores atribuídos aos agentes estão habilitados no modo global.
 
-**Aplicação:** a CLI `multagent start` iniciará backend e painel local em Windows/Linux. Consulte [distribuição e instalação](../04-distribuicao/01-instalacao-cli.md).
+**Aplicação:** `multagent` abre GUI Desktop sem navegador/porta HTTP. `multagent-server init` define porta/bind e `multagent-server start` publica o painel do Server com autenticação. Consulte [editions](../04-distribuicao/04-edicoes-desktop-server.md) e [instalação](../04-distribuicao/01-instalacao-cli.md).
 
 ## Perfis de agentes
 
