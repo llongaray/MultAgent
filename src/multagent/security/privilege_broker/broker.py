@@ -71,8 +71,14 @@ def execute_admin_operation(operation: str, target: str) -> None:
     if not os_elevated():
         raise BrokerDenied("Run the helper under a separately approved OS-admin account")
     if platform.system() == "Windows":
-        # Windows SCM requires separate fixed stop/start calls to restart a service.
-        command_sequence = [command, ("sc.exe", "start", "MultAgentServer")]
+        # Resolve sc.exe through the kernel, never from a potentially modified PATH.
+        import ctypes
+        destination = ctypes.create_unicode_buffer(32768)
+        if not ctypes.windll.kernel32.GetSystemDirectoryW(destination, 32768):
+            raise BrokerDenied("Cannot verify Windows system directory")
+        system_sc = str(Path(destination.value) / "sc.exe")
+        command_sequence = [(system_sc, "stop", "MultAgentServer"),
+                            (system_sc, "start", "MultAgentServer")]
     else:
         command_sequence = [command]
     for args in command_sequence:
@@ -133,10 +139,24 @@ class PrivilegeBroker:
             raise BrokerDenied("Broker ticket expired")
         if (ticket.operation, ticket.target) not in OPERATIONS:
             raise BrokerDenied("Administrative operation not allowlisted")
+        # Recheck persisted grant: revoking it invalidates even freshly signed tickets.
+        resource = self.resources.require(workspace_id=ticket.workspace_id,
+                principal_id=ticket.principal_id, resource_id=ticket.resource_id, action="execute")
+        if resource.kind != "tool" or resource.locator != f"admin://{ticket.operation}/{ticket.target}":
+            raise BrokerDenied("Administrative resource no longer authorized")
         with self._lock:
+            key = "privilege-broker:" + ticket.nonce
             if ticket.nonce in self._used:
                 raise BrokerDenied("Replay of one-time broker ticket")
-            # Consume before invoking executor. Failure cannot be replayed.
+            try:
+                self.resources.storage.get("run", ticket.workspace_id, key)
+            except KeyError:
+                pass
+            else:
+                raise BrokerDenied("Ticket previously consumed in another broker session")
+            # Persist before executing: a service restart must not resurrect this ticket.
+            self.resources.storage.put("run", ticket.workspace_id, key,
+                {"id": key, "workspace_id": ticket.workspace_id, "state": "consumed"})
             self._used.add(ticket.nonce)
         self.resources.storage.record_audit(ticket.workspace_id, ticket.principal_id,
                                              ticket.resource_id, "admin-attempt")
