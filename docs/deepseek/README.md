@@ -2,6 +2,8 @@
 
 > **Revisão: 18/10/2026** · Idioma: pt-BR · Documentação independente para o projeto [MultAgent](../../README.md). Conferir alterações na [documentação oficial](https://api-docs.deepseek.com/). Os exemplos não foram executados com credenciais reais.
 
+**Integração no MultAgent:** consulte [modo exclusivo DeepSeek](../arquitetura/02-somente-deepseek.md) e [modo híbrido DeepSeek + Grok](../arquitetura/04-hibrido.md). O material abaixo continua independente dos outros provedores.
+
 ## Como estudar (passo a passo)
 
 1. [Modelos, capacidades, preços e descoberta](01-modelos-e-custos.md)
