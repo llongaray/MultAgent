@@ -20,8 +20,10 @@ class Registry:
         if self.http_factory:
             client = self.http_factory(timeout=20)
         else:
-            try: import httpx
-            except ImportError as exc: raise RuntimeError("Install multagent[forges]") from exc
+            try:
+                import httpx
+            except ImportError as exc:
+                raise RuntimeError("Install multagent[forges]") from exc
             client = httpx.Client(timeout=20, follow_redirects=False)
         with client as session:
             response = session.get(self.url)
