@@ -1,20 +1,27 @@
 # MultAgent
 
-Repositório de desenvolvimento de sistemas multiagentes. A primeira seção oferece documentação técnica, em português do Brasil, sobre a **DeepSeek API oficial**, com tutoriais, endpoints, modelos, segurança e integrações em diversas linguagens.
+**Arquitetura multiagente modular**, em português brasileiro, com documentação de APIs oficiais DeepSeek e Grok/xAI, além de propostas independentes e híbridas. Nesta fase o repositório contém documentação técnica e desenho de software; **a aplicação MultiAgent ainda não foi implementada**.
 
-## Documentação DeepSeek API
+## Comece por aqui
 
-**[Começar pela documentação e índice](docs/deepseek/README.md)**
+| Seção | Conteúdo |
+|---|---|
+| **[Arquitetura multiagente](docs/arquitetura/README.md)** | Componentes, modos DeepSeek Only / Grok Only / Hybrid, router, contratos e roadmap |
+| **[DeepSeek API](docs/deepseek/README.md)** | Modelos, preços, endpoints, tools, MCP via orquestrador e exemplos em 10 linguagens |
+| **[Grok / xAI API](docs/grok/README.md)** | Modelos, custos, Responses API, Search, MCP remoto, Python e JS/TS |
 
-- [Modelos, capacidades e custos](docs/deepseek/01-modelos-e-custos.md)
-- [Primeiros passos, conta, API key e cURL](docs/deepseek/02-primeiros-passos.md)
-- [Referência de endpoints e parâmetros](docs/deepseek/03-referencia-rest.md)
-- [Raciocínio, visão, JSON, streaming e limites](docs/deepseek/04-recursos-avancados.md)
-- [Agentes, ferramentas, MCP e arquitetura](docs/deepseek/05-multiagentes-mcp.md)
-- [Python](docs/deepseek/linguagens/python.md) · [JavaScript/TypeScript](docs/deepseek/linguagens/javascript-typescript.md) · [Go](docs/deepseek/linguagens/go.md) · [C](docs/deepseek/linguagens/c.md) · [Ruby](docs/deepseek/linguagens/ruby.md)
-- [Java](docs/deepseek/linguagens/java.md) · [C#](docs/deepseek/linguagens/csharp.md) · [PHP](docs/deepseek/linguagens/php.md) · [Rust](docs/deepseek/linguagens/rust.md) · [Bash/cURL](docs/deepseek/linguagens/bash.md)
-- [Protocolo Anthropic compatível](docs/deepseek/07-protocolo-anthropic.md)
-- [Operação em produção e troubleshooting](docs/deepseek/08-producao-e-troubleshooting.md)
-- [Fontes oficiais, atualização e uso permitido](docs/deepseek/06-fontes-e-manutencao.md)
+## Três modalidades
 
-> **Versão de referência:** 18/10/2026. API, limites e preços podem mudar: consulte a [documentação oficial](https://api-docs.deepseek.com/). Exemplos didáticos, sem chave ou credenciais reais; não são testes autenticados contra a API.
+- **[Somente DeepSeek](docs/arquitetura/02-somente-deepseek.md)** — agentes com DeepSeek e ferramentas gerenciadas pelo backend.
+- **[Somente Grok](docs/arquitetura/03-somente-grok.md)** — agentes com xAI Responses, tools geridas e MCP remoto opcional.
+- **[Híbrido DeepSeek + Grok](docs/arquitetura/04-hibrido.md)** — router seleciona provedor por custo, capacidade, privacidade e qualidade.
+
+### Documentos centrais
+
+[Topologia](docs/arquitetura/01-visao-componentes.md) · [Roteamento e custo](docs/arquitetura/05-roteamento-e-custos.md) · [Contratos/adapters](docs/arquitetura/06-contratos-e-adapters.md) · [Configuração YAML](docs/arquitetura/08-configuracao-e-perfis.md) · [Roadmap](docs/arquitetura/07-plano-de-implementacao.md)
+
+### Regra de segurança
+
+Cada provedor tem sua própria chave e faturamento. Chaves **nunca** devem ser incluídas no repositório; fallback entre provedores depende de permissão explícita. Ferramentas MCP externas não são automaticamente confiáveis.
+
+> **Revisão da documentação: 18/10/2026.** Modelos, preços, aliases e funcionalidades podem mudar. Consulte [DeepSeek oficial](https://api-docs.deepseek.com/) e [xAI oficial](https://docs.x.ai/developers). Exemplos didáticos não foram testados com credenciais autenticadas.
