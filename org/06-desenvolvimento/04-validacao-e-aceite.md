@@ -14,6 +14,10 @@
 - [ ] Implementar código Python/React e scripts — **fora do escopo desta etapa**.
 - [ ] Compilar, executar testes ou publicar GitHub Releases — **fora do escopo desta etapa**.
 
+## Evolução após a etapa documental: P0-01
+
+O primeiro incremento de código instala somente o **pacote-base Python** e testes de importação/metadados. Não deve ser confundido com aplicativo completo, GUI Desktop, servidor, integração com modelos nem aprovação de release. Esta entrega segue o fluxo de PR: feature → dev → hml → main somente após aceite do proprietário.
+
 ## Matriz de critérios para marcos futuros
 
 | Componente | Condição de aceite futura |
