@@ -9,6 +9,8 @@
 - [x] Documentação DeepSeek independente.
 - [x] Documentação Grok independente.
 - [x] Projeto lógico dos modos `deepseek_only`, `grok_only` e `hybrid`.
+- [x] Documentada decisão de distribuição: Windows/Linux, CLI `multagent`, painel web local e releases públicas.
+- [ ] Definir licença final do repositório (AGPLv3 em avaliação) e validar compatibilidade das dependências.
 - [ ] Aprovar stack, requisitos, categorias de dados e responsabilidades do produto.
 - [ ] Confirmar chaves e acesso real aos modelos (sem salvar chaves neste repo).
 
@@ -16,8 +18,11 @@
 
 ## Fase 1 — Núcleo executável (sem tools externas)
 
-- [ ] FastAPI com `POST /runs` e `GET /runs/{id}`.
-- [ ] Schemas Pydantic, estados de run e banco local SQLite ou PostgreSQL.
+- [ ] Criar pacote instalável com entrypoint CLI `multagent` (`start`, `status`, `doctor`).
+- [ ] FastAPI local com `POST /runs` e `GET /runs/{id}`, bind inicial somente em `127.0.0.1`.
+- [ ] Compilar painel React/TypeScript e integrá-lo ao backend, servido no navegador.
+- [ ] Schemas Pydantic, estados de run e SQLite local por padrão, com migrações seguras.
+- [ ] Configurar cofre seguro de chaves por SO (Windows Credential Manager; Linux Secret Service/KWallet ou vault protegido).
 - [ ] DeepSeekAdapter e GrokAdapter para texto (interface `ModelProvider`).
 - [ ] Configuração de modelo e modo via ambiente/YAML validado.
 - [ ] Router determinístico, timeout, retry e quotas simples.
@@ -48,7 +53,9 @@
 
 ## Fase 4 — Segurança e produção
 
-- [ ] Postgres, fila Redis se necessário, Docker Compose, health endpoints.
+- [ ] Criar instaladores shell/PowerShell oficiais, CLI `update` e `stop`, bundles Windows/Linux e GitHub Releases com checksums/verificação.
+- [ ] Instalação sem runtime de desenvolvimento instalado; smoke tests em máquinas limpas, criação de atalhos e preservação de dados em updates.
+- [ ] Serviços em background/auto-start somente por opt-in; PostgreSQL, fila Redis e Docker como opcionais de escala; health endpoints locais.
 - [ ] OTel/logs estruturados, alertas, dashboards de tokens/custos/erros.
 - [ ] Secret Manager, SAST/dependências, auditoria de dados e backups.
 - [ ] Multi-tenant: autorização, isolamento e política de retenção.
@@ -73,7 +80,7 @@ Os alvos são **propostas**, e o throughput/latência real dependem de chave, re
 
 ## Próximas decisões pendentes
 
-Antes de iniciar código: confirmar público-alvo/serviço, quais agentes serão oferecidos, limites de custo por tenant, política de dados e se a operação será apenas local ou também VPS. Sem isso, o MVP pode implementar recursos desnecessários.
+Antes de iniciar código: definir licença, perfis iniciais de agentes, limites de custo e retenção, matriz mínima de Windows/Linux suportados e critérios de aceitação do instalador. **Operação local instalável está definida como requisito; VPS/servidor fica como modo futuro e opcional.** Veja [guia de distribuição](../04-distribuicao/README.md). Sem isso, o MVP pode implementar recursos desnecessários.
 
 
 ---
