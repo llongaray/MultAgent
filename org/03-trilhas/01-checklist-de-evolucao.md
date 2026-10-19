@@ -11,7 +11,19 @@ Este documento permite acompanhar o projeto e identificar quando passar de docum
 - [x] Documentação Grok/xAI segregada.
 - [x] Desenhos Only DeepSeek, Only Grok e Hybrid.
 - [x] Mapa mestre com acesso por tópico, links cruzados e navegação.
+- [x] Especificação de distribuição Linux/Windows por comando e política de releases.
+- [ ] Escolher e publicar licença legal definitiva (AGPLv3 em avaliação).
 - [ ] Verificação de todas as APIs/modelos com chaves de teste e créditos controlados.
+
+## Instalação e distribuição CLI
+
+- [ ] Criar código Python/React e comando `multagent`.
+- [ ] Criar script instalador Linux e instalador PowerShell com verificação de integridade.
+- [ ] Compilar artefatos autossuficientes para Windows/Linux e publicar releases.
+- [ ] Implementar `multagent start`, `status`, `update`, `doctor` e atalhos.
+- [ ] Testar execução sem Python/Node/Docker previamente instalados.
+- [ ] Configurar vault de tokens e serviço local sem expor porta na rede.
+- [ ] Configurar CI/PRs, branch protegida e releases auditáveis.
 
 ## MVP funcional
 
