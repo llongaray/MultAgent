@@ -43,7 +43,9 @@ multagent:
     require_approval_for_writes: true
 ```
 
-Para mudar de modo, altere `mode` e, se aplicável, `allowed_providers`. O backend deve validar que todos os provedores selecionados pertencem ao modo; se divergirem, falhar no startup em vez de ignorar.
+**Na distribuição para usuários finais, essa configuração será feita pelo painel React**, persistida no SQLite; o YAML aqui é somente modelo para desenvolvimento, provisionamento ou diagnóstico. O usuário terá abas **Integrações** (cadastrar/excluir/testar chaves DeepSeek e/ou Grok), **Configurações** (escolher `deepseek_only`, `grok_only` ou `hybrid`) e **Funcionários** (criar agentes, escolher provedor/modelo, ferramentas e permissões). A chave fica em vault do sistema; SQLite armazena apenas um identificador seguro da credencial. Alterações de modo devem suspender agentes com provedor desabilitado, sem trocá-los automaticamente; fallback exige aprovação/política explícita. O backend valida que os provedores atribuídos aos agentes estão habilitados no modo global.
+
+**Aplicação:** a CLI `multagent start` iniciará backend e painel local em Windows/Linux. Consulte [distribuição e instalação](../04-distribuicao/01-instalacao-cli.md).
 
 ## Perfis de agentes
 
