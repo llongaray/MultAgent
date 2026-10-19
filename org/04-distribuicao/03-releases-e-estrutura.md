@@ -14,17 +14,16 @@ MultAgent/
 │   ├── 02-arquiteturas/
 │   ├── 03-trilhas/
 │   └── 04-distribuicao/
-├── src/multagent/               # código do produto Python
-│   ├── __main__.py              # python -m multagent (desenvolvimento)
-│   ├── cli.py                   # start, status, update, doctor
-│   ├── api/                     # FastAPI, static SPA, autenticação local
-│   ├── core/                    # orquestrador, workflow, router e execução
+├── src/multagent/               # Python compartilhado
+│   ├── core/                    # orquestrador, workflow, router, agentes
 │   ├── providers/               # adapters DeepSeek e Grok
-│   ├── agents/                  # agentes e perfis
 │   ├── tools/                   # tool gateway, MCP local
-│   ├── storage/                 # SQLite, migrações
-│   └── security/                # vault e controle de acesso
-├── frontend/                    # React + TypeScript/Vite (proposta)
+│   ├── storage/                 # SQLite, Postgres opcional, migrações
+│   ├── security/                # vault e controle de acesso
+│   ├── desktop/                 # PySide6/Qt Widgets: GUI verdadeira
+│   ├── server/                  # FastAPI: HTTP somente edição Server
+│   └── cli/                     # comandos multagent / multagent-server
+├── frontend-server/             # React + TypeScript: somente edição Server
 │   ├── src/
 │   └── package.json
 ├── scripts/
@@ -37,6 +36,8 @@ MultAgent/
 ├── LICENSE                      # PENDENTE: definição pelo titular
 └── .gitignore
 ```
+
+**Referência da separação entre GUIs e serviços:** [Núcleo Python compartilhado](../02-arquiteturas/09-desktop-server-core-compartilhado.md).
 
 **Importante:** os caminhos de código são **somente um projeto de estrutura**; ainda não estão criados como arquivos executáveis.
 
@@ -59,7 +60,7 @@ flowchart LR
 
 - Tags versionadas (`v0.1.0`, `v0.1.1`, ...) apontam para **commits públicos**.
 - Uma release contém código correspondente, notas, binários para cada sistema suportado e arquivos de verificação.
-- Nomes sugeridos: `multagent-v0.1.0-windows-x86_64.zip`, `multagent-v0.1.0-linux-x86_64.tar.gz`, `multagent-v0.1.0-linux-aarch64.tar.gz`; mais arquiteturas só após CI e testes.
+- **Dois artefatos por sistema-alvo:** `multagent-desktop-v0.1.0-windows-x86_64.zip`, `multagent-server-v0.1.0-windows-x86_64.zip`, `multagent-desktop-v0.1.0-linux-x86_64.tar.gz` e `multagent-server-v0.1.0-linux-x86_64.tar.gz` (nomes de referência; incluir outras arquiteturas apenas após CI/testes).
 - Um manifesto `SHA256SUMS` fornece digests, mas precisa ter **origem autenticada** para proteger contra substituição do próprio manifesto; preferir attestations/assinaturas de release do GitHub e publicar checks adicionais.
 - Instalação por usuário sem privilégio admin/root na via padrão.
 - O `multagent update` resolve o release oficial do canal selecionado (`stable`/`beta`), valida versão e integridade, mantém dados/configurações e dá rollback quando viável.
@@ -74,13 +75,14 @@ GitHub descreve [verificação de integridade de releases](https://docs.github.c
 ## Build reproduzível e documentação
 
 A matriz de CI deve:
-- testar backend Python, API local, banco/migrações e policy router;
-- testar frontend React e gerar build estático;
-- empacotar frontend e backend da **mesma tag**;
-- executar smoke tests em Windows e Linux, inclusive máquina sem Python;
+- testar o **motor Python compartilhado**, banco/migrações, modelos e policy router;
+- testar **PySide6 GUI Desktop** e empacotar Qt sem FastAPI/React obrigatório;
+- testar FastAPI/HTTP e frontend **React exclusivo do Server**;
+- empacotar Desktop e Server **separadamente**, sempre a partir da mesma tag;
+- executar smoke tests Desktop em Windows 10/11 e Ubuntu/Debian com GUI, e Server em Linux/Windows headless, inclusive máquinas sem Python;
 - bloquear release se um artefato ou checksum não bater;
 - manter README e índice `org/` atualizados quando a CLI mudar;
-- testar funcionamento offline do painel e tratamento de ausência de Internet;
+- testar GUI Desktop offline sem abertura de porta; testar HTTP Server autenticado, bind/porta/TLS e comportamento sem Internet;
 - permitir que qualquer interessado reconstrua o pacote a partir do código e das dependências declaradas.
 
 ## Diferença entre código open-source e componentes externos
@@ -95,5 +97,7 @@ A aplicação funciona com chave da API do **próprio usuário**, e o usuário p
 4. Projetar vault multiplataforma e modo Linux headless.
 5. Decidir se `--background` será entregue no primeiro MVP.
 6. Definir política de atualização automática (padrão sugerido: **verificar**, mas não atualizar sem consentimento).
+
+**Releases Desktop e Server:** [Contratos das duas edições](04-edicoes-desktop-server.md). O binário Desktop deve usar `pyside6-deploy`/Nuitka ou equivalente validado; Server não inclui Qt. Licenças dos componentes Qt devem acompanhar a distribuição conforme aplicável.
 
 **Relacionado:** [Mapa mestre](../README.md) · [Arquitetura](../02-arquiteturas/README.md) · [Roadmap](../02-arquiteturas/07-plano-de-implementacao.md).
