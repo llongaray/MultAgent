@@ -1,0 +1,17 @@
+# Exemplos de conectores
+
+> [← Mapa Mestre](../../org/README.md) · [↑ Pasta pai](../README.md) · [Guia de desenvolvimento](../../org/06-desenvolvimento/README.md)
+
+**Estado: pasta criada somente para documentação.**
+
+## Objetivo
+
+Planejar exemplos de GitHub, GitLab, Bitbucket, SSH, apps e MCP.
+
+## Regras para implementação
+
+Usar placeholders, sem credenciais.
+
+## Próximos passos
+
+Definir contratos, criar arquivos de código apenas em etapa aprovada, documentar dependências, testar e publicar release verificável. Consulte [roadmap](../../org/05-integracoes/05-caminho-de-implementacao.md) e [governança](../../org/04-distribuicao/02-licenca-e-contribuicoes.md).
