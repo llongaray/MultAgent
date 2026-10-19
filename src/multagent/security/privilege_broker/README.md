@@ -1,23 +1,7 @@
-# Broker de operações elevadas
+# P9-02 — Broker de privilégio restrito
 
-> [← Mapa Mestre](../../../../org/README.md) · [↑ Pasta pai](../README.md) · [Integrações e permissões](../../../../org/05-integracoes/README.md)
+**Implementado (código e testes):** solicitações assinadas HMAC-SHA256, validade <=60s, nonce consumido uma vez, confirmação humana explícita, grants por usuário/agente/workspace, auditoria de tentativa/resultado; API de IPC via AF_UNIX em diretório 0700 / AF_PIPE com authkey independente em Windows. Allowlist inicial somente `restart-service` do serviço `multagent-server`; subprocesso sem shell, timeout e verificação de OS-admin. A execução NUNCA concede shell/root ao modelo ou recebe comandos arbitrários.
 
-**Status: somente documentação.** Ainda não há código implementado neste diretório.
+**Importante:** implementar transporte e validação NÃO instala um serviço privilegiado, NÃO fornece consentimento seguro da tela do OS e NÃO concede elevação. O administrador deve registrar/iniciar um helper isolado com chaves geridas fora do LLM, políticas do sistema operacional e permissão explícita; `execute_admin_operation` recusa se não estiver elevado. A integração UAC/sudo/polkit e E2E em Windows/Linux ainda exigem implantação e revisão adversarial. Não usar este código como um serviço root em produção sem essas verificações.
 
-## Finalidade
-
-Permitir operações administrativas determinadas com consentimento explícito.
-
-## Interfaces e componentes previstos
-
-IPC autenticado, allowlist de operações, expiração, auditoria.
-
-## Segurança e limites
-
-Agente não recebe sudo/admin, prompt não vira comando privilegiado.
-
-## Validação futura
-
-Revisão adversarial e negativa de abuso.
-
-**Referências:** [Caminho de implementação](../../../../org/05-integracoes/05-caminho-de-implementacao.md) · [Acesso à máquina](../../../../org/02-arquiteturas/11-acesso-maquina-e-isolamento.md).
+Testes de negação, replay, assinatura falsa, TTL, paths de socket e auditabilidade são cobertos pela CI. Nenhuma operação administrativa real é chamada em testes.
