@@ -4,7 +4,6 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-import secrets
 from typing import Any
 from multagent.server.auth.security import hash_password
 
