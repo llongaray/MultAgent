@@ -31,7 +31,7 @@ class AuthorizedSSH:
         for typ in (paramiko.Ed25519Key,paramiko.RSAKey,paramiko.ECDSAKey):
             try:
                 key=typ.from_private_key(StringIO(raw))
-            break
+                break
             except paramiko.SSHException:
                 pass
         if key is None:
