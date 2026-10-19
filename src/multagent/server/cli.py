@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import getpass
 from pathlib import Path
+import os
 import sys
 from multagent import __version__
 from multagent.server.config import config_path, initialize, load
@@ -50,6 +51,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         import uvicorn
         from multagent.server.api import create_app
+        config["frontend_dir"] = os.environ.get("MULTAGENT_SERVER_UI", str(Path(__file__).resolve().parents[3] / "frontend-server" / "dist"))
         app = create_app(config)
         uvicorn.run(app, host=config["bind"], port=config["port"],
                     ssl_certfile=config.get("tls_cert"), ssl_keyfile=config.get("tls_key"),
