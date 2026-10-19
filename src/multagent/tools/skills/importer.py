@@ -7,7 +7,8 @@ from urllib.parse import quote
 from typing import Any
 from multagent.resources import ResourceManager
 
-class SkillDenied(PermissionError):pass
+class SkillDenied(PermissionError):
+    pass
 
 class SkillImporter:
     def __init__(self,resources:ResourceManager,quarantine_dir:Path,http_factory:Any=None)->None:
@@ -17,23 +18,30 @@ class SkillImporter:
 
     def import_skill(self, *, ws:str,actor:str,rid:str,provider:str,revision:str,path:str,
                      sha256:str,approved_network:bool=False)->Path:
-        if not approved_network:raise SkillDenied("Network import needs authorization")
-        if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}",ws):raise SkillDenied("Invalid workspace directory identity")
+        if not approved_network:
+            raise SkillDenied("Network import needs authorization")
+        if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}",ws):
+            raise SkillDenied("Invalid workspace directory identity")
         resource=self.resources.require(workspace_id=ws,principal_id=actor,resource_id=rid,action="read")
-        if resource.kind!="git":raise SkillDenied("Git repository grant required")
+        if resource.kind!="git":
+            raise SkillDenied("Git repository grant required")
         match=re.fullmatch(r"https://(github.com|gitlab.com)/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)",resource.locator)
         if not match or provider not in ("github","gitlab") or match.group(1)!=(provider+".com"):
             raise SkillDenied("Untrusted skill repository origin")
         if not re.fullmatch(r"[0-9a-f]{40}",revision) or not re.fullmatch(r"[a-zA-Z0-9_./-]{1,150}",path) or ".." in Path(path).parts or not path.endswith(".md"):
             raise SkillDenied("Skill revision or path is not immutable and safe")
-        if not re.fullmatch("[0-9a-fA-F]{64}",sha256):raise ValueError("Missing pinned content checksum")
+        if not re.fullmatch("[0-9a-fA-F]{64}",sha256):
+            raise ValueError("Missing pinned content checksum")
         owner,repo=match.group(2),match.group(3)
         url=(f"https://raw.githubusercontent.com/{owner}/{repo}/{revision}/{quote(path)}" if provider=="github"
              else f"https://gitlab.com/{owner}/{repo}/-/raw/{revision}/{quote(path)}")
-        if self.http_factory:client=self.http_factory(timeout=20)
+        if self.http_factory:
+            client=self.http_factory(timeout=20)
         else:
-            try:import httpx
-            except ImportError as exc:raise RuntimeError("Install multagent[forges]") from exc
+            try:
+                import httpx
+            except ImportError as exc:
+                raise RuntimeError("Install multagent[forges]") from exc
             client=httpx.Client(timeout=20,follow_redirects=False)
         with client as session:
             reply=session.get(url)
@@ -44,6 +52,7 @@ class SkillImporter:
             raise SkillDenied("Skill checksum mismatch")
         target=self.root/ws/(provider+"-"+owner+"-"+repo)/(revision+"-"+sha256.lower()+".md")
         target.parent.mkdir(parents=True,exist_ok=True)
-        if not target.exists():target.write_bytes(data)
+        if not target.exists():
+            target.write_bytes(data)
         # No imported skill is executed or given tools automatically.
         return target
