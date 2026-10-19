@@ -16,7 +16,8 @@ def config_path() -> Path:
 
 
 def initialize(path: Path, password: str, port: int = 8765, bind: str = "127.0.0.1", *,
-               tls_cert: str | None = None, tls_key: str | None = None,\n               allowed_hosts: tuple[str, ...] = ()) -> None:
+               tls_cert: str | None = None, tls_key: str | None = None,
+               allowed_hosts: tuple[str, ...] = ()) -> None:
     if not 1024 <= port <= 65535:
         raise ValueError("Unprivileged port required: 1024..65535")
     if bind not in ("127.0.0.1", "::1") and not (tls_cert and tls_key):
