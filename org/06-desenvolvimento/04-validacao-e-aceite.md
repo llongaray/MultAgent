@@ -9,6 +9,8 @@
 - [x] Criar documentação de CLI, instaladores, testes e release.
 - [x] Criar documentação para GitHub, GitLab, Bitbucket, SSH, MCP, OAuth, plugins e skills.
 - [x] Reservar pastas para GitHub Actions, exemplos, configurações e assets.
+- [x] Criar proposta documental de fluxo por PR e prioridades P0, P1, P2..., com template de PR.
+- [ ] Configurar Ruleset/branch protection na `main`, checks e labels P0/P1/P2... — **ainda não ativos**.
 - [ ] Implementar código Python/React e scripts — **fora do escopo desta etapa**.
 - [ ] Compilar, executar testes ou publicar GitHub Releases — **fora do escopo desta etapa**.
 

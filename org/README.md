@@ -104,6 +104,8 @@ flowchart TB
 - [Contratos e dependências](06-desenvolvimento/02-contratos-e-dependencias.md) — fronteiras core, Desktop, Server, ferramentas e broker.
 - [Padrões de documentação](06-desenvolvimento/03-padroes-de-documentacao.md) — convenções para contribuintes.
 - [Validação e critérios de aceite](06-desenvolvimento/04-validacao-e-aceite.md) — o que já existe e o que continua pendente.
+- **[PRs obrigatórios por módulo e prioridades P0 → P1 → P2...](06-desenvolvimento/05-fluxo-de-prs-e-prioridades.md)** — ordem, dependências e checklist.
+- [Como contribuir](../CONTRIBUTING.md) · [Template do PR](../.github/PULL_REQUEST_TEMPLATE.md).
 
 **Estado:** foram criadas pastas e arquivos Markdown de estrutura, **não** código-fonte executável. Cada diretório técnico novo contém seu próprio README.
 

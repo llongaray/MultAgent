@@ -10,7 +10,7 @@ Documentar futuros workflows, templates, revisão e releases.
 
 ## Regras para implementação
 
-Ainda não existem ações CI/CD implementadas.
+Ainda não existem ações CI/CD implementadas. Para contribuições, o [template de PR](PULL_REQUEST_TEMPLATE.md) e o [guia P0/P1/P2...](../org/06-desenvolvimento/05-fluxo-de-prs-e-prioridades.md) especificam prioridades, revisões, testes e critérios de aceite.
 
 ## Próximos passos
 
