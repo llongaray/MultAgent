@@ -25,6 +25,15 @@ Esta área oferece percursos de leitura sem obrigar a percorrer dezenas de arqui
 5. [Roadmap de implementação](../02-arquiteturas/07-plano-de-implementacao.md).
 6. [Checklist de evolução](01-checklist-de-evolucao.md).
 
+## Quero colocar agentes para trabalhar de verdade
+
+1. [Missão, fluxo de trabalho e exemplos](../00-fundamentos/05-proposito-e-casos-de-uso.md).
+2. [Hierarquia de agentes, tarefas e limites](../02-arquiteturas/10-hierarquia-processos-e-politicas.md).
+3. [Acesso a máquina e elevação autorizada](../02-arquiteturas/11-acesso-maquina-e-isolamento.md).
+4. [Git local e remoto, GitHub/GitLab/Bitbucket e SSH](../05-integracoes/01-git-repositorios-ssh.md).
+5. [Catálogo público MCP, plugins e skills](../05-integracoes/02-catalogo-mcp-plugins-skills.md).
+6. [Roadmap de integração em marcos](../05-integracoes/05-caminho-de-implementacao.md).
+
 ## Quero instalar ou distribuir no Windows/Linux
 
 1. [Visão geral da distribuição](../04-distribuicao/README.md).
