@@ -22,6 +22,7 @@
 6. [Contratos de interfaces, formatos de mensagem, tools e MCP](06-contratos-e-adapters.md).
 7. [Etapas de implementação, testes e critérios de aceite](07-plano-de-implementacao.md).
 8. [Exemplos de configuração, papéis de agentes e políticas](08-configuracao-e-perfis.md).
+9. [Distribuição Windows/Linux, CLI e instalação pelo terminal](../04-distribuicao/README.md).
 
 ## Documentação específica dos provedores
 
@@ -39,15 +40,19 @@
 7. **Modelos substituíveis.** Descoberta por catálogo de cada conta; nomes/tarifas são versionados com revisões.
 8. **Sem dependência de SaaS obrigatória além da API escolhida.** PostgreSQL/Redis/MCP podem rodar em máquina local ou VPS.
 
-## Stack candidata (a decidir na implementação)
+## Stack e distribuição base do MVP
 
-- **Backend/orquestrador:** Python 3.12+ e FastAPI.
-- **Interface:** React ou Next.js opcional.
-- **Persistência:** PostgreSQL (tarefas, artefatos, uso, auditoria) e SQLite para prova de conceito local.
-- **Execução:** worker asyncio/Celery/RQ, conforme volume; Redis opcional para fila e limites distribuídos.
-- **MCP:** cliente local controlado pelo backend; proxy remoto autenticado onde explicitamente permitido.
-- **Observabilidade:** logs JSON, OpenTelemetry opcional, logs de custo por tenant, métricas de falhas.
-- **Implantação:** Docker Compose local e infraestrutura modular futura.
+- **Backend/orquestrador:** Python 3.12+ e FastAPI, empacotados para Windows/Linux.
+- **Interface:** React + TypeScript/Vite, compilada e servida pelo backend local no navegador.
+- **Persistência:** SQLite por padrão (instalação única), com PostgreSQL como evolução opcional para servidor/multiusuário.
+- **CLI:** entrypoint `multagent` com `start`, `status`, `stop` (modo background), `update`, `doctor`; **ainda não implementados**.
+- **Execução:** processo foreground inicialmente; workers assíncronos controlados; execução em background/auto-start é recurso opt-in posterior.
+- **MCP:** cliente local controlado pelo backend; proxy remoto autenticado apenas quando permitido.
+- **Observabilidade:** logs JSON, custo por provider e métricas de falhas.
+- **Distribuição:** releases públicas verificáveis por SO/arquitetura, instalação via shell/PowerShell, sem exigir Python/Node/Docker no caminho do usuário final; Docker opcional para desenvolvimento/servidor.
+- **Tauri:** não faz parte do MVP; poderá ser interface alternativa no futuro.
+
+Veja [instalação e execução](../04-distribuicao/01-instalacao-cli.md) e [governança open-source](../04-distribuicao/02-licenca-e-contribuicoes.md).
 
 O desenho é **incremental**: primeiro prova de conceito sem ferramentas destrutivas, depois multiagentes e, por último, ferramentas externas e escala.
 
