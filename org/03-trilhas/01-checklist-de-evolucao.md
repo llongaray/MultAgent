@@ -11,23 +11,24 @@ Este documento permite acompanhar o projeto e identificar quando passar de docum
 - [x] Documentação Grok/xAI segregada.
 - [x] Desenhos Only DeepSeek, Only Grok e Hybrid.
 - [x] Mapa mestre com acesso por tópico, links cruzados e navegação.
-- [x] Especificação de distribuição Linux/Windows por comando e política de releases.
+- [x] Especificação de duas edições instaláveis por comando: Desktop GUI Qt e Server headless com FastAPI/React; política de releases.
 - [ ] Escolher e publicar licença legal definitiva (AGPLv3 em avaliação).
 - [ ] Verificação de todas as APIs/modelos com chaves de teste e créditos controlados.
 
 ## Instalação e distribuição CLI
 
-- [ ] Criar código Python/React e comando `multagent`.
+- [ ] Implementar **core Python único** e duas aplicações: GUI Desktop **PySide6/Qt** (`multagent`) e serviço Server **FastAPI + React** (`multagent-server`).
 - [ ] Criar script instalador Linux e instalador PowerShell com verificação de integridade.
-- [ ] Compilar artefatos autossuficientes para Windows/Linux e publicar releases.
-- [ ] Implementar `multagent start`, `status`, `update`, `doctor` e atalhos.
+- [ ] Compilar **artefatos Desktop e Server independentes** para Windows/Linux, publicando releases verificáveis por edição e plataforma.
+- [ ] Implementar `multagent` para abrir janela sem HTTP/navegador, com `logs`, `update`, `doctor` e atalhos.
+- [ ] Implementar `multagent-server init` (porta/bind configuráveis), `start`, `status`, `logs`, `update`, `doctor` e serviço opcional (systemd/Windows Service).
 - [ ] Testar execução sem Python/Node/Docker previamente instalados.
-- [ ] Configurar vault de tokens e serviço local sem expor porta na rede.
+- [ ] Configurar vault de tokens em ambas as edições; **Desktop sem porta**, Server com bind seguro/TLS/autenticação e escolha explícita de exposição da rede.
 - [ ] Configurar CI/PRs, branch protegida e releases auditáveis.
 
 ## MVP funcional
 
-- [ ] API FastAPI para criar/consultar runs.
+- [ ] GUI Qt nativa para criar/consultar runs no Desktop e API FastAPI autenticada para criar/consultar runs no Server.
 - [ ] Provider Adapter DeepSeek e Grok.
 - [ ] Catálogo dinâmico de modelos e router determinístico.
 - [ ] Papéis supervisor, executor e reviewer.
