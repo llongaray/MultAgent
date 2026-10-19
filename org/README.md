@@ -4,7 +4,7 @@
 
 ## 1. O que estamos construindo?
 
-O **MultAgent** é a proposta de uma plataforma pública no GitHub e instalável por terminal em Windows/Linux, com um serviço local iniciado pela CLI `multagent`. O motor Python + FastAPI servirá um painel React acessível no navegador; Tauri não é obrigatório no MVP. A plataforma executará vários **agentes especializados**, coordenados por um **orquestrador**, para decompor problemas, executar tarefas, usar ferramentas e validar resultados. [Detalhes da distribuição](04-distribuicao/README.md). Os comandos de instalação e execução ainda são requisitos a implementar. O projeto prevê três configurações independentes:
+O **MultAgent** é a proposta de uma plataforma pública no GitHub, instalável via terminal, com **duas edições**: **Desktop**, executável Python/PySide6 que abre uma janela gráfica real em Windows 10/11 e Ubuntu/Debian **sem navegador, React ou porta HTTP**, e **Server**, executável headless para Windows/Linux Server com FastAPI, porta configurável e painel React remoto. O núcleo Python de IA será compartilhado entre ambas. A plataforma executará vários **agentes especializados**, coordenados por um **orquestrador**, para decompor problemas, executar tarefas, usar ferramentas e validar resultados. [Detalhes da distribuição](04-distribuicao/README.md). Os comandos de instalação e execução ainda são requisitos a implementar. O projeto prevê três configurações independentes:
 
 - **Somente DeepSeek:** todos os modelos de IA vêm da DeepSeek.
 - **Somente Grok/xAI:** todos os modelos de IA vêm da xAI.
@@ -32,7 +32,8 @@ flowchart TB
     A --> BOTH["Híbrido: seleção por tarefa e custo"]
     A --> CORE["Router, contratos, configuração e roadmap"]
     T --> STUDY["Trilha de estudo + percurso de implementação"]
-    DIST --> CLI["Instalador oficial + CLI multagent start"]
+    DIST --> CLI["Desktop GUI nativo: multagent"]
+    DIST --> SERVER["Server com HTTP configurável: multagent-server"]
     DIST --> GOV["AGPLv3 em avaliação + PRs + releases"]
 ```
 
@@ -56,6 +57,7 @@ flowchart TB
 - [Arquitetura: somente Grok](02-arquiteturas/03-somente-grok.md).
 - [Arquitetura: híbrida DeepSeek + Grok](02-arquiteturas/04-hibrido.md).
 - [Componentes do sistema e topologia](02-arquiteturas/01-visao-componentes.md).
+- [Como Desktop e Server compartilham o núcleo Python](02-arquiteturas/09-desktop-server-core-compartilhado.md).
 - [Router: selecionar modelos, calcular custo e fazer fallback](02-arquiteturas/05-roteamento-e-custos.md).
 - [Contratos, adapters, mensagens e ferramentas](02-arquiteturas/06-contratos-e-adapters.md).
 - [Configuração YAML e perfis de agentes](02-arquiteturas/08-configuracao-e-perfis.md).
@@ -68,8 +70,9 @@ flowchart TB
 
 ### 04 — Distribuição pública: instalar pelo terminal e contribuir com código aberto
 
-- **[Índice de distribuição e governança](04-distribuicao/README.md)** — decisões de empacotamento, serviço local e publicação do código.
-- [Instalação Windows/Linux e CLI `multagent`](04-distribuicao/01-instalacao-cli.md) — comando de instalação, `multagent start`, atalhos, atualização e serviço opcional.
+- **[Índice de distribuição e governança](04-distribuicao/README.md)** — duas edições executáveis, empacotamento, inicialização e publicação do código.
+- **[Desktop nativo e Server headless: diferenciação](04-distribuicao/04-edicoes-desktop-server.md)** — PySide6 sem web e FastAPI/React somente no servidor.
+- [Instalação Windows/Linux e CLI](04-distribuicao/01-instalacao-cli.md) — `multagent` abre a GUI; `multagent-server` inicia a API e painel somente na edição servidor.
 - [Licença open-source e contribuições](04-distribuicao/02-licenca-e-contribuicoes.md) — AGPLv3 em avaliação, diferença entre publicação de código distribuído e mudanças privadas, PRs obrigatórios no projeto oficial.
 - [GitHub Releases e CI/CD](04-distribuicao/03-releases-e-estrutura.md) — build de artefatos, integridade, tags, empacotamento e layout do código.
 
@@ -137,6 +140,7 @@ flowchart TD
 | Como fazer MCP e ferramentas com segurança? | [Ferramentas Grok](01-provedores/grok/04-ferramentas-mcp.md) e [Agentes DeepSeek](01-provedores/deepseek/05-multiagentes-mcp.md) |
 | Como controlar preços e escolher o modelo? | [Router e custos](02-arquiteturas/05-roteamento-e-custos.md) |
 | Como implementar de verdade? | [Roadmap](02-arquiteturas/07-plano-de-implementacao.md) |
+| Como abrir janela nativa ou ativar edição Server? | [Edições Desktop e Server](04-distribuicao/04-edicoes-desktop-server.md) |
 | Como instalar no Linux/Windows e executar pelo terminal? | [Instalação/CLI](04-distribuicao/01-instalacao-cli.md) |
 | Como garantir código aberto e receber alterações? | [Governança e licença](04-distribuicao/02-licenca-e-contribuicoes.md) |
 
