@@ -49,9 +49,9 @@
 
 - [ ] Fonte de metadados MCP Registry e pesquisa dentro da GUI/painel Server.
 - [ ] Manifestos, trust score **baseado em evidência**, permissões, versões fixadas.
-- [ ] OAuth/PCKE conforme provedor; Device Flow quando suportado, vault e revogação.
+- [ ] OAuth/PKCE conforme provedor; Device Flow quando suportado, vault e revogação.
 - [ ] Conectar MCP remoto de leitura, depois MCP local em sandbox.
-- [ ] Instalação/revisão de plugins/skills de repositórios Git com quarantena e isolamento.
+- [ ] Instalação/revisão de plugins/skills de repositórios Git com quarentena e isolamento.
 - [ ] Testes de supply-chain, schema de ferramentas, prompt injection e exfiltração.
 
 **Aceite:** instalar integração autorizada sem executar hooks arbitrários ou ganhar privilégios extras.
