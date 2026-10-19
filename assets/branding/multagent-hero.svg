@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 350" role="img" aria-labelledby="title desc">
+  <title id="title">MultAgent</title>
+  <desc id="desc">Plataforma multiagente: um núcleo conecta agentes DeepSeek e Grok a um Desktop nativo e à edição Server.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a1228"/>
+      <stop offset="55%" stop-color="#172653"/>
+      <stop offset="100%" stop-color="#0e2839"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <linearGradient id="surface" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#233967"/>
+      <stop offset="100%" stop-color="#172544"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#7297b7" stroke-opacity=".095" stroke-width="1"/>
+    </pattern>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+  </defs>
+  <rect width="1100" height="350" rx="20" fill="url(#bg)"/>
+  <rect width="1100" height="350" rx="20" fill="url(#grid)"/>
+  <circle cx="894" cy="138" r="130" fill="#32b9db" opacity=".13" filter="url(#glow)"/>
+  <circle cx="136" cy="330" r="125" fill="#6366f1" opacity=".14" filter="url(#glow)"/>
+  <rect x="48" y="48" width="36" height="36" rx="10" fill="url(#accent)"/>
+  <path d="M58 69h16M66 61v16" stroke="#12203c" stroke-width="3" stroke-linecap="round"/>
+  <text x="101" y="77" font-size="17" font-family="Segoe UI, Arial, sans-serif" font-weight="700" letter-spacing="4" fill="#97b1ca">MULTAGENT</text>
+  <text x="48" y="155" font-size="55" font-family="Segoe UI, Arial, sans-serif" font-weight="800" letter-spacing="-2" fill="#f8fbff">Agentes juntos.</text>
+  <text x="48" y="220" font-size="55" font-family="Segoe UI, Arial, sans-serif" font-weight="800" letter-spacing="-2" fill="url(#accent)">Você no controle.</text>
+  <text x="50" y="263" font-size="19" font-family="Segoe UI, Arial, sans-serif" fill="#c2d6ea">DeepSeek + Grok  ·  Python  ·  Desktop + Server</text>
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle">
+    <path d="M753 111H804M805 111V66H858M805 111V155H858M753 225H805V225H858" stroke="#67e8f9" stroke-opacity=".64" stroke-width="2" fill="none"/>
+    <path d="M805 225V268H858" stroke="#818cf8" stroke-opacity=".66" stroke-width="2" fill="none"/>
+    <rect x="615" y="152" width="145" height="112" rx="18" fill="#14213f" stroke="#67e8f9" stroke-opacity=".75" stroke-width="2"/>
+    <circle cx="686" cy="186" r="16" fill="url(#accent)"/>
+    <path d="M679 186h14M686 179v14" stroke="#0b1831" stroke-width="2.7" stroke-linecap="round"/>
+    <text x="686" y="219" fill="#fff" font-size="17">Núcleo</text>
+    <text x="686" y="239" fill="#b9cde2" font-weight="400" font-size="12">permissões + fluxos</text>
+    <path d="M760 201h44" stroke="#67e8f9" stroke-opacity=".75" stroke-width="2" stroke-dasharray="5 6"/>
+    <rect x="858" y="38" width="195" height="56" rx="13" fill="url(#surface)" stroke="#74a2d4" stroke-opacity=".45"/>
+    <rect x="858" y="109" width="195" height="56" rx="13" fill="url(#surface)" stroke="#74a2d4" stroke-opacity=".45"/>
+    <rect x="858" y="180" width="195" height="56" rx="13" fill="url(#surface)" stroke="#74a2d4" stroke-opacity=".45"/>
+    <rect x="858" y="251" width="195" height="56" rx="13" fill="url(#surface)" stroke="#74a2d4" stroke-opacity=".45"/>
+    <text x="955" y="71" fill="#edf7ff">DeepSeek / Grok</text>
+    <text x="955" y="142" fill="#edf7ff">Desktop Qt</text>
+    <text x="955" y="213" fill="#edf7ff">Server API</text>
+    <text x="955" y="284" fill="#edf7ff">Git · SSH · MCP</text>
+  </g>
+  <rect x="1" y="1" width="1098" height="348" rx="19" stroke="#6a91bc" stroke-opacity=".27" stroke-width="2" fill="none"/>
+</svg>
