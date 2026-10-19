@@ -10,6 +10,8 @@ Este documento permite acompanhar o projeto e identificar quando passar de docum
 - [x] Documentação DeepSeek segregada.
 - [x] Documentação Grok/xAI segregada.
 - [x] Desenhos Only DeepSeek, Only Grok e Hybrid.
+- [x] Documentada missão de agentes hierárquicos com acesso por recurso para trabalho real.
+- [x] Documentado catálogo de MCP/plugins/skills, Git/SSH e política de elevação por broker.
 - [x] Mapa mestre com acesso por tópico, links cruzados e navegação.
 - [x] Especificação de duas edições instaláveis por comando: Desktop GUI Qt e Server headless com FastAPI/React; política de releases.
 - [ ] Escolher e publicar licença legal definitiva (AGPLv3 em avaliação).
@@ -34,6 +36,15 @@ Este documento permite acompanhar o projeto e identificar quando passar de docum
 - [ ] Papéis supervisor, executor e reviewer.
 - [ ] Persistência de estado e orçamento por run.
 - [ ] Testes reais e simulados dos três modos.
+
+## Hierarquia, repositórios e plugins
+
+- [ ] Gravar equipes, funcionários, supervisor_id, workflows e grants.
+- [ ] Workspaces Git locais isolados, patches, testes e revisões.
+- [ ] GitHub, GitLab, Bitbucket e SSH com autorização de escopo mínimo.
+- [ ] Catálogo online de MCP, plugins e skills, versões fixas e instalação revisada.
+- [ ] OAuth quando disponível no provedor, com tokens no vault e revogação.
+- [ ] Automação de aplicativos locais por API/acessibilidade e privilégios exclusivos via broker.
 
 ## Integração de ferramentas
 
