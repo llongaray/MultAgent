@@ -5,7 +5,6 @@ import json
 import os
 import re
 from pathlib import Path
-import secrets
 from typing import Any
 from multagent.server.auth.security import hash_password
 
@@ -20,8 +19,10 @@ def initialize(path: Path, password: str, port: int = 8765, bind: str = "127.0.0
                allowed_hosts: tuple[str, ...] = ()) -> None:
     if not 1024 <= port <= 65535:
         raise ValueError("Unprivileged port required: 1024..65535")
-    if bind not in ("127.0.0.1", "::1") and not (tls_cert and tls_key):
-        raise ValueError("Non-loopback bind requires direct TLS certificate and key")
+    if bind not in ("127.0.0.1", "::1") and not (tls_cert and tls_key and allowed_hosts):
+        raise ValueError("External bind requires TLS certificate/key and allowed hosts")
+    if any(not re.fullmatch(r"[A-Za-z0-9.:-]{1,253}", host) for host in allowed_hosts):
+        raise ValueError("Invalid Host allowlist entry")
     if (tls_cert is None) != (tls_key is None):
         raise ValueError("Both TLS certificate and key are required")
     if path.exists():
