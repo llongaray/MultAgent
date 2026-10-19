@@ -1,7 +1,6 @@
 """Native GUI entry point; no FastAPI, WebView or HTTP bind."""
 from __future__ import annotations
 
-from pathlib import Path
 import sys
 from multagent import __version__
 from multagent.desktop.cli import data_directory
