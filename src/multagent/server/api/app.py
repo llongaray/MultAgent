@@ -143,6 +143,16 @@ def create_app(config: dict[str, Any], store: SQLiteStore | None = None) -> Fast
     def list_audit() -> list[dict[str, Any]]:
         return database.audit_log(WORKSPACE)
 
+    @app.get("/assets/{filename:path}")
+    def static_asset(filename: str) -> Any:
+        directory = Path(str(config.get("frontend_dir") or "")) / "assets"
+        if not filename or ".." in Path(filename).parts:
+            raise HTTPException(status_code=404)
+        asset = (directory / filename).resolve()
+        if not config.get("frontend_dir") or not asset.is_relative_to(directory.resolve()) or not asset.is_file():
+            raise HTTPException(status_code=404)
+        return FileResponse(asset)
+
     @app.get("/")
     def frontend(request: Request) -> Any:
         index = Path(str(config.get("frontend_dir", ""))) / "index.html"
