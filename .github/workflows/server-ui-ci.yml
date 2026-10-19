@@ -1,0 +1,24 @@
+name: Server React build
+on:
+  pull_request:
+    branches: [dev, hml, main]
+  push:
+    branches: [dev, hml, main]
+permissions:
+  contents: read
+jobs:
+  react:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend-server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --package-lock-only --ignore-scripts
+      - run: npm ci
+      - run: npm run build
+      - name: Verify compiled assets
+        run: test -f dist/index.html
