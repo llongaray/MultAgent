@@ -1,0 +1,16 @@
+name: Branch promotion gate
+on:
+  pull_request:
+    branches: [dev, hml, main]
+    types: [opened, reopened, synchronize, ready_for_review, edited]
+permissions:
+  contents: read
+jobs:
+  promotion-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate base, source and repository
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: python scripts/governance/promotion_gate.py
