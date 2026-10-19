@@ -8,26 +8,34 @@ from multagent.resources import ResourceManager
 class AuthorizedSSH:
     COMMANDS={"uptime":"uptime","hostname":"hostname","disk":"df -h"}
     def __init__(self,resources:ResourceManager,vault:Any,credential_ref:str,known_hosts:str):
-        if not credential_ref.startswith("vault:"):raise ValueError("Vault reference required")
+        if not credential_ref.startswith("vault:"):
+            raise ValueError("Vault reference required")
         self.resources,self.vault,self.ref,self.known_hosts=resources,vault,credential_ref,known_hosts
 
     def run(self,ws:str,principal:str,rid:str,command:str,*,approved:bool=False)->str:
         if not approved or command not in self.COMMANDS:
             raise PermissionError("Remote command not approved or allowlisted")
         r=self.resources.require(workspace_id=ws,principal_id=principal,resource_id=rid,action="execute")
-        if r.kind!="ssh":raise PermissionError("SSH grant required")
+        if r.kind!="ssh":
+            raise PermissionError("SSH grant required")
         url=urlsplit(r.locator)
         if (url.scheme!="ssh" or not url.username or not url.hostname or url.password
             or url.username.lower()=="root" or url.path not in ("","/") or url.query or url.fragment):
             raise PermissionError("Invalid SSH host or privileged account")
-        try:import paramiko
-        except ImportError as exc:raise RuntimeError("Install multagent[ssh]") from exc
+        try:
+            import paramiko
+        except ImportError as exc:
+            raise RuntimeError("Install multagent[ssh]") from exc
         raw=self.vault.get(self.ref)
         key=None
         for typ in (paramiko.Ed25519Key,paramiko.RSAKey,paramiko.ECDSAKey):
-            try:key=typ.from_private_key(StringIO(raw));break
-            except paramiko.SSHException:pass
-        if key is None:raise PermissionError("Unsupported SSH private key")
+            try:
+                key=typ.from_private_key(StringIO(raw))
+            break
+            except paramiko.SSHException:
+                pass
+        if key is None:
+            raise PermissionError("Unsupported SSH private key")
         client=paramiko.SSHClient()
         client.load_host_keys(self.known_hosts)
         client.set_missing_host_key_policy(paramiko.RejectPolicy())
@@ -39,4 +47,5 @@ class AuthorizedSSH:
             if len(result)>50000 or stdout.channel.recv_exit_status():
                 raise RuntimeError("Remote command failed or output exceeded limit")
             return result.decode("utf-8",errors="replace")
-        finally:client.close()
+        finally:
+            client.close()
