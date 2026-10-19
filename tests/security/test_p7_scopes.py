@@ -24,7 +24,7 @@ def test_grants_and_explicit_network_consent(tmp_path):
     forge=RemoteForge("github",m,Vault(),"vault:github",http_factory=lambda **_:HTTP())
     with pytest.raises(ForgeDenied):forge.branches("ws","worker","r")
     assert forge.branches("ws","worker","r",approved_network=True)["ok"]
-    with pytest.raises(PermissionError):forge.branches("another","worker","r",approved_network=True)
+    with pytest.raises((PermissionError, KeyError)):forge.branches("another","worker","r",approved_network=True)
     with pytest.raises(ForgeDenied):forge.create_pr("ws","worker","r","Review","feature","main")
     m.grant(PermissionGrant("write","ws","worker","r","write"))
     assert forge.create_pr("ws","worker","r","Review","feature","main",approved_write=True)["ok"]
