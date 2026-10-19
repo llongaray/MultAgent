@@ -4,6 +4,8 @@
 
 ## 1. O que estamos construindo?
 
+O **MultAgent** tem a missão de permitir que o usuário configure **múltiplos funcionários/agentes de IA**, com hierarquia de processos, equipes, ferramentas e permissões para realizar trabalhos reais: editar/testar código em Git local ou remoto, operar aplicativos, usar SSH e integrar MCPs, plugins e skills. O usuário controla o que cada agente pode acessar e autoriza ações críticas. [Propósito e exemplos](00-fundamentos/05-proposito-e-casos-de-uso.md).
+
 O **MultAgent** é a proposta de uma plataforma pública no GitHub, instalável via terminal, com **duas edições**: **Desktop**, executável Python/PySide6 que abre uma janela gráfica real em Windows 10/11 e Ubuntu/Debian **sem navegador, React ou porta HTTP**, e **Server**, executável headless para Windows/Linux Server com FastAPI, porta configurável e painel React remoto. O núcleo Python de IA será compartilhado entre ambas. A plataforma executará vários **agentes especializados**, coordenados por um **orquestrador**, para decompor problemas, executar tarefas, usar ferramentas e validar resultados. [Detalhes da distribuição](04-distribuicao/README.md). Os comandos de instalação e execução ainda são requisitos a implementar. O projeto prevê três configurações independentes:
 
 - **Somente DeepSeek:** todos os modelos de IA vêm da DeepSeek.
@@ -22,6 +24,7 @@ flowchart TB
     ROOT --> A["02 · Arquiteturas de multiagentes"]
     ROOT --> T["03 · Trilhas e decisões"]
     ROOT --> DIST["04 · Distribuição Windows/Linux + open-source"]
+    ROOT --> INTEG["05 · Integrações Git, SSH, MCP, apps e skills"]
     F --> L["Como funciona um LLM, tokens e contexto"]
     F --> AG["Agentes, ferramentas, MCP e RAG"]
     F --> WHY["Por que comparar DeepSeek e Grok"]
@@ -35,6 +38,9 @@ flowchart TB
     DIST --> CLI["Desktop GUI nativo: multagent"]
     DIST --> SERVER["Server com HTTP configurável: multagent-server"]
     DIST --> GOV["AGPLv3 em avaliação + PRs + releases"]
+    INTEG --> GIT["Workspaces: GitHub, GitLab, Bitbucket, SSH"]
+    INTEG --> MCP["Catálogo público MCP / plugins / skills"]
+    INTEG --> ACCESS["Permissões do PC e OAuth por agente"]
 ```
 
 ### 00 — Fundamentos: entender os conceitos antes da API
@@ -44,6 +50,7 @@ flowchart TB
 - [O que faz um agente? Orquestração, ferramentas, MCP e RAG](00-fundamentos/02-o-que-e-multiagente.md).
 - [Por que DeepSeek e Grok? O que cada um ganha e perde](00-fundamentos/03-por-que-deepseek-e-grok.md).
 - [Glossário técnico: do token ao gateway MCP](00-fundamentos/04-glossario.md).
+- **[O propósito do MultAgent e casos de uso reais](00-fundamentos/05-proposito-e-casos-de-uso.md)** — por que o sistema existe e quais entregáveis produz.
 
 ### 01 — Provedores: documentação específica, sem misturar APIs
 
@@ -58,6 +65,8 @@ flowchart TB
 - [Arquitetura: híbrida DeepSeek + Grok](02-arquiteturas/04-hibrido.md).
 - [Componentes do sistema e topologia](02-arquiteturas/01-visao-componentes.md).
 - [Como Desktop e Server compartilham o núcleo Python](02-arquiteturas/09-desktop-server-core-compartilhado.md).
+- [Hierarquia de funcionários, workflows e delegação](02-arquiteturas/10-hierarquia-processos-e-politicas.md).
+- [Acesso à máquina, aplicativos e privilégios sob controle](02-arquiteturas/11-acesso-maquina-e-isolamento.md).
 - [Router: selecionar modelos, calcular custo e fazer fallback](02-arquiteturas/05-roteamento-e-custos.md).
 - [Contratos, adapters, mensagens e ferramentas](02-arquiteturas/06-contratos-e-adapters.md).
 - [Configuração YAML e perfis de agentes](02-arquiteturas/08-configuracao-e-perfis.md).
@@ -75,6 +84,15 @@ flowchart TB
 - [Instalação Windows/Linux e CLI](04-distribuicao/01-instalacao-cli.md) — `multagent` abre a GUI; `multagent-server` inicia a API e painel somente na edição servidor.
 - [Licença open-source e contribuições](04-distribuicao/02-licenca-e-contribuicoes.md) — AGPLv3 em avaliação, diferença entre publicação de código distribuído e mudanças privadas, PRs obrigatórios no projeto oficial.
 - [GitHub Releases e CI/CD](04-distribuicao/03-releases-e-estrutura.md) — build de artefatos, integridade, tags, empacotamento e layout do código.
+
+### 05 — Integrações: transformar IA em trabalho real
+
+- **[Portal de integrações e catálogo](05-integracoes/README.md)** — mapa de recursos instaláveis e autorizáveis.
+- [Git local, GitHub, GitLab, Bitbucket e SSH](05-integracoes/01-git-repositorios-ssh.md).
+- [Registro público MCP, plugins e skills de repositórios](05-integracoes/02-catalogo-mcp-plugins-skills.md).
+- [OAuth, tokens, vault e confiança por extensão](05-integracoes/03-oauth-tokens-seguranca.md).
+- [Exemplos práticos de workflows com hierarquia](05-integracoes/04-workflows-e-exemplos.md).
+- **[Caminho de implementação em marcos](05-integracoes/05-caminho-de-implementacao.md)**.
 
 ## 3. Entendimento rápido: como uma IA LLM funciona?
 
@@ -133,6 +151,11 @@ flowchart TD
 | O que são IA, LLM, tokens e janela de contexto? | [Fundamentos LLM](00-fundamentos/01-o-que-e-llm.md) |
 | O que são agente, ferramentas, MCP e RAG? | [Fundamentos de multiagentes](00-fundamentos/02-o-que-e-multiagente.md) |
 | Qual a diferença DeepSeek x Grok? | [Comparação e critérios](00-fundamentos/03-por-que-deepseek-e-grok.md) |
+| Como definir objetivo do produto e entregáveis? | [Missão e casos de uso](00-fundamentos/05-proposito-e-casos-de-uso.md) |
+| Como integrar GitHub/GitLab/Bitbucket ou SSH? | [Git, repositórios e SSH](05-integracoes/01-git-repositorios-ssh.md) |
+| Onde instalar MCPs, plugins e skills? | [Catálogo e segurança](05-integracoes/02-catalogo-mcp-plugins-skills.md) |
+| Como controlar permissão de apps/PC/sudo? | [Acesso ao sistema operacional](02-arquiteturas/11-acesso-maquina-e-isolamento.md) |
+| Como montar hierarquia de funcionários? | [Processos e delegação](02-arquiteturas/10-hierarquia-processos-e-politicas.md) |
 | Como criar API key e chamar DeepSeek? | [Quickstart DeepSeek](01-provedores/deepseek/02-primeiros-passos.md) |
 | Como integrar DeepSeek com Python? | [Python DeepSeek](01-provedores/deepseek/linguagens/python.md) |
 | Como criar API key e chamar Grok? | [Quickstart Grok](01-provedores/grok/02-primeiros-passos.md) |
