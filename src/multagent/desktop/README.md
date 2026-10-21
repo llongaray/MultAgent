@@ -28,5 +28,5 @@ Nenhuma API externa paga é necessária nesta homologação.
 
 - A coluna Estado distingue **Desativado** de **Suspenso pela política**. A lista de Execuções exibe o motivo e uma tentativa de iniciar um funcionário desativado é bloqueada com mensagem específica antes de qualquer chamada externa.
 - A validação é executada ao clicar em Salvar, mantendo o diálogo aberto com os dados digitados quando o domínio ou a hierarquia rejeitam a alteração.
-- Caso o supervisor persistido não esteja disponível no workspace, a edição é bloqueada com alerta em vez de converter silenciosamente a referência para `None`.
+- Caso o supervisor persistido não esteja disponível no workspace, o diálogo apresenta a referência ausente. Salvar mantendo-a selecionada é recusado sem fechar o formulário; selecionar **Sem supervisor** ou outro funcionário válido permite reparar o vínculo.
 - Os testes usam `objectName` estável nos widgets e cobrem persistência, cancelamento, validação, hierarquia cíclica e supervisor ausente.
