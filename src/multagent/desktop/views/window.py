@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 
 from multagent import __version__
 from multagent.agents import AgentRegistry
+from multagent.desktop.theme import apply_theme
 from multagent.core.domain import Agent, PermissionGrant, Resource
 from multagent.core.router import Mode, Router, RoutingConfig
 from multagent.providers.deepseek import DeepSeekAdapter
@@ -71,6 +72,7 @@ class MainWindow(QMainWindow):
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
         self._build_home()
+        self.set_theme(self.theme_combo.currentData(), persist=False)
         self._build_agents()
         self._build_integrations()
         self._build_permissions()
@@ -104,10 +106,36 @@ class MainWindow(QMainWindow):
         self.mode_combo.setCurrentIndex(list(Mode).index(self.router.config.mode))
         button = QPushButton("Salvar modo global")
         button.clicked.connect(self.save_mode)
+        self.theme_combo = QComboBox()
+        self.theme_combo.setObjectName("desktop_theme")
+        self.theme_combo.addItem("Claro", "light")
+        self.theme_combo.addItem("Escuro", "dark")
+        try:
+            saved_theme = self.store.get("settings", WORKSPACE, "appearance")["theme"]
+        except (KeyError, ValueError):
+            saved_theme = "light"
+        self.theme_combo.setCurrentIndex(max(0, self.theme_combo.findData(saved_theme)))
+        self.theme_combo.currentIndexChanged.connect(
+            lambda _index: self.set_theme(self.theme_combo.currentData())
+        )
+        layout.addWidget(QLabel("Tema da interface"))
+        layout.addWidget(self.theme_combo)
         layout.addWidget(QLabel("Política de provedores"))
         layout.addWidget(self.mode_combo)
         layout.addWidget(button)
         layout.addStretch()
+
+    def set_theme(self, theme: str, persist: bool = True) -> None:
+        from PySide6.QtWidgets import QApplication
+
+        app = QApplication.instance()
+        if app is not None:
+            apply_theme(app, theme)
+        if persist:
+            self.store.put(
+                "settings", WORKSPACE, "appearance",
+                {"id": "appearance", "workspace_id": WORKSPACE, "theme": theme},
+            )
 
     def save_mode(self) -> None:
         mode = self.mode_combo.currentData()
@@ -141,6 +169,7 @@ class MainWindow(QMainWindow):
         self.agent_table = QTableWidget(0, 5)
         self.agent_table.setHorizontalHeaderLabels(["ID", "Nome", "Cargo", "Provedor", "Estado"])
         self.agent_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.agent_table.setTabKeyNavigation(False)
         layout.addWidget(self.agent_table)
 
     def add_agent(self) -> None:
@@ -202,6 +231,7 @@ class MainWindow(QMainWindow):
         enabled.setObjectName("edit_agent_enabled")
         enabled.setChecked(agent.enabled)
         instructions = QTextEdit()
+        instructions.setTabChangesFocus(True)
         instructions.setObjectName("edit_agent_instructions")
         instructions.setPlainText(agent.instructions)
         instructions.setAcceptRichText(False)
@@ -356,6 +386,7 @@ class MainWindow(QMainWindow):
         self.grants_table = QTableWidget(0, 4)
         self.grants_table.setHorizontalHeaderLabels(["Grant ID", "Funcionário", "Ação", "Revogado"])
         self.grants_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.grants_table.setTabKeyNavigation(False)
         layout.addWidget(self.grants_table)
         revoke_button = QPushButton("Revogar grant selecionado")
         revoke_button.clicked.connect(self.revoke_permission)
@@ -441,6 +472,7 @@ class MainWindow(QMainWindow):
         page, layout = self._page("Execuções")
         self.run_agent = QComboBox()
         self.run_prompt = QPlainTextEdit()
+        self.run_prompt.setTabChangesFocus(True)
         self.run_prompt.setPlaceholderText("Descreva a tarefa para o funcionário selecionado.")
         self.input_rate = QDoubleSpinBox()
         self.output_rate = QDoubleSpinBox()

@@ -33,7 +33,7 @@ where = ["src"]
 include = ["multagent*"]
 namespaces = false
 [tool.setuptools.package-data]
-multagent = ["py.typed"]
+multagent = ["py.typed", "desktop/assets/*.svg"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]

@@ -42,3 +42,23 @@ A criação de grant exige seleção explícita de funcionário e continua subme
 - A tabela de grants mostra o nome do funcionário e o identificador abreviado. O UUID integral permanece preservado no SQLite para operações de revogação e auditoria. Se o funcionário foi excluído, o texto **Funcionário ausente** explicita a referência órfã.
 - Mudar o tipo de recurso limpa o campo de caminho/identificador, impedindo reutilização acidental de uma pasta como identificador Git/SSH/app/tool. O botão de seleção de pasta permanece exclusivo de `directory`.
 - Testes de regressão garantem apresentação legível e bloqueio de concessão com locator vazio após a troca de tipo.
+
+### V002-T01 — tema Qt (implementação inicial)
+
+A aba Início contém um seletor de tema claro/escuro. Tokens e QSS centralizados ficam em `src/multagent/desktop/theme.py`; a escolha persiste em SQLite e é aplicada ao iniciar o Desktop. Controles possuem contraste definido e indicador visual de foco. Testes automáticos em `tests/unit/test_v002_t01_qt_theme.py`.
+
+**Pendente na revisão:** screenshots comparativos Windows 11, verificação manual de contraste/acessibilidade e adaptação de espaçamento em resoluções menores. A existência de QSS não equivale à homologação visual.
+
+#### Ajustes de acessibilidade após revisão
+
+- Contornos de controles foram reforçados para atender contraste não textual mínimo de 3:1 nas superfícies padrão.
+- `QTableCornerButton::section` usa a superfície da tabela, inclusive em modo escuro.
+- O seletor exibe **Claro** e **Escuro**, mas persiste os identificadores estáveis `light` e `dark`.
+- Estilos de foco contemplam também checkbox, spin box e tabela; o indicador visual do checkbox possui QSS próprio. A homologação por teclado e os screenshots de Windows continuam como critérios manuais.
+
+#### Revisão da navegação por teclado
+
+- `QPlainTextEdit` da tarefa e `QTextEdit` das instruções usam `setTabChangesFocus(True)`: Tab segue para o controle seguinte; novas linhas e edição continuam disponíveis (Tab passa a navegar).
+- Tabelas de Funcionários e Permissões usam `setTabKeyNavigation(False)`, evitando foco circular entre células. Navegação interna por setas permanece disponível.
+- Checkbox selecionado inclui um visto vetorial explícito, com variantes para contraste em Claro e Escuro, empacotadas com a aplicação.
+- Cobertura de regressão em `tests/unit/test_v002_t01_qt_theme.py`; homologação manual final de teclado/Windows permanece necessária.
