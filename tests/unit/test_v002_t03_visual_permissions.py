@@ -32,8 +32,17 @@ def test_permission_agent_selector_and_directory_picker(tmp_path, monkeypatch):
     records = window.store.list("grant", WORKSPACE)
     assert len(records) == 1
     assert records[0]["principal_id"] == agent.id
+    assert window.grants_table.item(0, 1).text() == (
+        agent.name + " (" + agent.id[:8] + ")"
+    )
     window.resource_kind.setCurrentText("ssh")
     assert not window.resource_picker.isEnabled()
+    assert window.resource_locator.text() == ""
+    messages = []
+    monkeypatch.setattr(QMessageBox, "warning", lambda *args: messages.append(args[2]))
+    window.grant_permission()
+    assert messages
+    assert len(window.store.list("grant", WORKSPACE)) == 1
     window.close()
     assert app is not None
 
@@ -47,5 +56,26 @@ def test_permission_requires_selected_agent(tmp_path, monkeypatch):
     window.grant_permission()
     assert messages and "Selecione um funcionário" in messages[-1]
     assert window.store.list("grant", WORKSPACE) == []
+    window.close()
+    assert app is not None
+
+
+def test_missing_grant_principal_is_explicit(tmp_path):
+    app = QApplication.instance() or QApplication([])
+    window = MainWindow(tmp_path)
+    window.store.put(
+        "grant", WORKSPACE, "historical-grant",
+        {
+            "id": "historical-grant",
+            "workspace_id": WORKSPACE,
+            "principal_id": "missing-agent",
+            "resource_id": "old-resource",
+            "action": "read",
+            "revoked": False,
+        },
+    )
+    window.refresh_grants()
+    assert "Funcionário ausente" in window.grants_table.item(0, 1).text()
+    assert window.store.list("grant", WORKSPACE)[0]["principal_id"] == "missing-agent"
     window.close()
     assert app is not None
