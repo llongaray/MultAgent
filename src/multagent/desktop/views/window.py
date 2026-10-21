@@ -169,6 +169,7 @@ class MainWindow(QMainWindow):
         self.agent_table = QTableWidget(0, 5)
         self.agent_table.setHorizontalHeaderLabels(["ID", "Nome", "Cargo", "Provedor", "Estado"])
         self.agent_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.agent_table.setTabKeyNavigation(False)
         layout.addWidget(self.agent_table)
 
     def add_agent(self) -> None:
@@ -230,6 +231,7 @@ class MainWindow(QMainWindow):
         enabled.setObjectName("edit_agent_enabled")
         enabled.setChecked(agent.enabled)
         instructions = QTextEdit()
+        instructions.setTabChangesFocus(True)
         instructions.setObjectName("edit_agent_instructions")
         instructions.setPlainText(agent.instructions)
         instructions.setAcceptRichText(False)
@@ -384,6 +386,7 @@ class MainWindow(QMainWindow):
         self.grants_table = QTableWidget(0, 4)
         self.grants_table.setHorizontalHeaderLabels(["Grant ID", "Funcionário", "Ação", "Revogado"])
         self.grants_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.grants_table.setTabKeyNavigation(False)
         layout.addWidget(self.grants_table)
         revoke_button = QPushButton("Revogar grant selecionado")
         revoke_button.clicked.connect(self.revoke_permission)
@@ -469,6 +472,7 @@ class MainWindow(QMainWindow):
         page, layout = self._page("Execuções")
         self.run_agent = QComboBox()
         self.run_prompt = QPlainTextEdit()
+        self.run_prompt.setTabChangesFocus(True)
         self.run_prompt.setPlaceholderText("Descreva a tarefa para o funcionário selecionado.")
         self.input_rate = QDoubleSpinBox()
         self.output_rate = QDoubleSpinBox()
