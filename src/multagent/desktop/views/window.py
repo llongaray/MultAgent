@@ -191,12 +191,12 @@ class MainWindow(QMainWindow):
                 supervisor.addItem(colleague.name + " (" + colleague.id[:8] + ")", colleague.id)
         supervisor_index = supervisor.findData(agent.supervisor_id)
         if supervisor_index < 0:
-            QMessageBox.warning(
-                self, "Supervisor indisponível",
-                "O supervisor vinculado não existe neste workspace. "
-                "Corrija a referência antes de editar este funcionário.",
+            # Keep the stale reference visible so that the user can repair it.
+            supervisor.addItem(
+                "Supervisor ausente (" + str(agent.supervisor_id) + ")",
+                agent.supervisor_id,
             )
-            return
+            supervisor_index = supervisor.count() - 1
         supervisor.setCurrentIndex(supervisor_index)
         enabled = QCheckBox("Funcionário ativo")
         enabled.setObjectName("edit_agent_enabled")
@@ -220,6 +220,16 @@ class MainWindow(QMainWindow):
 
         def save_changes() -> None:
             try:
+                selected_supervisor = supervisor.currentData()
+                if selected_supervisor is not None and selected_supervisor == agent.supervisor_id:
+                    valid_ids = {
+                        colleague.id for colleague in self.registry.list(WORKSPACE)
+                        if colleague.id != agent.id
+                    }
+                    if selected_supervisor not in valid_ids:
+                        raise ValueError(
+                            "Supervisor ausente. Escolha Sem supervisor ou outro funcionário."
+                        )
                 updated = Agent(
                     id=agent.id,
                     workspace_id=agent.workspace_id,
