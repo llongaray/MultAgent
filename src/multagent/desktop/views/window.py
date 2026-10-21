@@ -174,20 +174,35 @@ class MainWindow(QMainWindow):
         dialog.setWindowTitle("Editar funcionário")
         form = QFormLayout(dialog)
         name = QLineEdit(agent.name)
+        name.setObjectName("edit_agent_name")
         role = QLineEdit(agent.role)
+        role.setObjectName("edit_agent_role")
         provider = QComboBox()
         provider.addItems(["deepseek", "grok"])
+        provider.setObjectName("edit_agent_provider")
         provider.setCurrentText(agent.provider)
         model = QLineEdit(agent.model)
+        model.setObjectName("edit_agent_model")
         supervisor = QComboBox()
+        supervisor.setObjectName("edit_agent_supervisor")
         supervisor.addItem("Sem supervisor", None)
         for colleague in self.registry.list(WORKSPACE):
             if colleague.id != agent.id:
                 supervisor.addItem(colleague.name + " (" + colleague.id[:8] + ")", colleague.id)
-        supervisor.setCurrentIndex(max(0, supervisor.findData(agent.supervisor_id)))
+        supervisor_index = supervisor.findData(agent.supervisor_id)
+        if supervisor_index < 0:
+            QMessageBox.warning(
+                self, "Supervisor indisponível",
+                "O supervisor vinculado não existe neste workspace. "
+                "Corrija a referência antes de editar este funcionário.",
+            )
+            return
+        supervisor.setCurrentIndex(supervisor_index)
         enabled = QCheckBox("Funcionário ativo")
+        enabled.setObjectName("edit_agent_enabled")
         enabled.setChecked(agent.enabled)
         instructions = QTextEdit()
+        instructions.setObjectName("edit_agent_instructions")
         instructions.setPlainText(agent.instructions)
         instructions.setAcceptRichText(False)
         form.addRow("Nome", name)
@@ -200,26 +215,30 @@ class MainWindow(QMainWindow):
         buttons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel
         )
-        buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
         form.addRow(buttons)
+
+        def save_changes() -> None:
+            try:
+                updated = Agent(
+                    id=agent.id,
+                    workspace_id=agent.workspace_id,
+                    name=name.text().strip(),
+                    provider=provider.currentText(),
+                    model=model.text().strip(),
+                    role=role.text().strip(),
+                    supervisor_id=supervisor.currentData(),
+                    enabled=enabled.isChecked(),
+                    instructions=instructions.toPlainText(),
+                )
+                self.registry.save(updated)
+            except (KeyError, ValueError, RuntimeError) as exc:
+                QMessageBox.warning(dialog, "Alterações não salvas", str(exc))
+                return  # Keep dialog open with unsaved edits.
+            dialog.accept()
+
+        buttons.button(QDialogButtonBox.StandardButton.Save).clicked.connect(save_changes)
         if dialog.exec() != QDialog.DialogCode.Accepted:
-            return
-        try:
-            updated = Agent(
-                id=agent.id,
-                workspace_id=agent.workspace_id,
-                name=name.text().strip(),
-                provider=provider.currentText(),
-                model=model.text().strip(),
-                role=role.text().strip(),
-                supervisor_id=supervisor.currentData(),
-                enabled=enabled.isChecked(),
-                instructions=instructions.toPlainText(),
-            )
-            self.registry.save(updated)
-        except (KeyError, ValueError, RuntimeError) as exc:
-            QMessageBox.warning(self, "Alterações não salvas", str(exc))
             return
         self.refresh_agents()
         for index in range(self.agent_table.rowCount()):
@@ -250,14 +269,21 @@ class MainWindow(QMainWindow):
         self.agent_table.setRowCount(len(agents))
         for i, a in enumerate(agents):
             columns = (a.id, a.name, a.role, a.provider + " / " + a.model,
-                       "Ativo" if self.registry.can_run(WORKSPACE, a.id) else "Suspenso")
+                       ("Desativado" if not a.enabled else
+                        "Ativo" if self.registry.can_run(WORKSPACE, a.id) else
+                        "Suspenso pela política"))
             for j, value in enumerate(columns):
                 self.agent_table.setItem(i, j, QTableWidgetItem(value))
         if hasattr(self, "run_agent"):
             selected = self.run_agent.currentData()
             self.run_agent.clear()
             for a in agents:
-                self.run_agent.addItem(a.name + " (" + a.provider + ")", a.id)
+                label = a.name + " (" + a.provider + ")"
+                if not a.enabled:
+                    label += " — Desativado"
+                elif not self.registry.can_run(WORKSPACE, a.id):
+                    label += " — Suspenso pela política"
+                self.run_agent.addItem(label, a.id)
             index = self.run_agent.findData(selected)
             if index >= 0:
                 self.run_agent.setCurrentIndex(index)
@@ -385,6 +411,10 @@ class MainWindow(QMainWindow):
             if not agent_id:
                 raise ValueError("Cadastre um funcionário primeiro")
             agent = self.registry.get(WORKSPACE, agent_id)
+            if not agent.enabled:
+                raise ValueError("Funcionário desativado. Ative-o antes de executar tarefas.")
+            if not self.registry.can_run(WORKSPACE, agent.id):
+                raise ValueError("Provedor suspenso pela política global.")
             prompt = self.run_prompt.toPlainText().strip()
             if not prompt:
                 raise ValueError("Informe a tarefa")
