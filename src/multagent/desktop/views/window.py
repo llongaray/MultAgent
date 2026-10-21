@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
         self._build_home()
-        self.set_theme(self.theme_combo.currentText(), persist=False)
+        self.set_theme(self.theme_combo.currentData(), persist=False)
         self._build_agents()
         self._build_integrations()
         self._build_permissions()
@@ -108,13 +108,16 @@ class MainWindow(QMainWindow):
         button.clicked.connect(self.save_mode)
         self.theme_combo = QComboBox()
         self.theme_combo.setObjectName("desktop_theme")
-        self.theme_combo.addItems(["light", "dark"])
+        self.theme_combo.addItem("Claro", "light")
+        self.theme_combo.addItem("Escuro", "dark")
         try:
             saved_theme = self.store.get("settings", WORKSPACE, "appearance")["theme"]
         except (KeyError, ValueError):
             saved_theme = "light"
-        self.theme_combo.setCurrentText(saved_theme if saved_theme in {"light", "dark"} else "light")
-        self.theme_combo.currentTextChanged.connect(self.set_theme)
+        self.theme_combo.setCurrentIndex(max(0, self.theme_combo.findData(saved_theme)))
+        self.theme_combo.currentIndexChanged.connect(
+            lambda _index: self.set_theme(self.theme_combo.currentData())
+        )
         layout.addWidget(QLabel("Tema da interface"))
         layout.addWidget(self.theme_combo)
         layout.addWidget(QLabel("Política de provedores"))
