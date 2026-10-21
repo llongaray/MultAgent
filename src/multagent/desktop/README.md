@@ -42,3 +42,9 @@ A criação de grant exige seleção explícita de funcionário e continua subme
 - A tabela de grants mostra o nome do funcionário e o identificador abreviado. O UUID integral permanece preservado no SQLite para operações de revogação e auditoria. Se o funcionário foi excluído, o texto **Funcionário ausente** explicita a referência órfã.
 - Mudar o tipo de recurso limpa o campo de caminho/identificador, impedindo reutilização acidental de uma pasta como identificador Git/SSH/app/tool. O botão de seleção de pasta permanece exclusivo de `directory`.
 - Testes de regressão garantem apresentação legível e bloqueio de concessão com locator vazio após a troca de tipo.
+
+### V002-T01 — tema Qt (implementação inicial)
+
+A aba Início contém um seletor de tema claro/escuro. Tokens e QSS centralizados ficam em `src/multagent/desktop/theme.py`; a escolha persiste em SQLite e é aplicada ao iniciar o Desktop. Controles possuem contraste definido e indicador visual de foco. Testes automáticos em `tests/unit/test_v002_t01_qt_theme.py`.
+
+**Pendente na revisão:** screenshots comparativos Windows 11, verificação manual de contraste/acessibilidade e adaptação de espaçamento em resoluções menores. A existência de QSS não equivale à homologação visual.
