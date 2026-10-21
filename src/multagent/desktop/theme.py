@@ -6,12 +6,12 @@ from PySide6.QtWidgets import QApplication
 THEMES = {
     "light": {
         "bg": "#f5f7fb", "surface": "#ffffff", "text": "#17243b",
-        "muted": "#506079", "border": "#9eacc0", "accent": "#175cbe",
+        "muted": "#506079", "border": "#68788e", "accent": "#175cbe",
         "on_accent": "#ffffff", "selection": "#d7e8ff",
     },
     "dark": {
         "bg": "#141b29", "surface": "#202c3e", "text": "#f1f5fb",
-        "muted": "#c5d0e2", "border": "#657790", "accent": "#82b8ff",
+        "muted": "#c5d0e2", "border": "#8497b0", "accent": "#82b8ff",
         "on_accent": "#07182d", "selection": "#35557e",
     },
 }
@@ -31,10 +31,20 @@ def stylesheet(theme: str) -> str:
     QPushButton {{ background-color: {c['surface']}; color: {c['text']};
       border: 1px solid {c['border']}; border-radius: 6px; padding: 8px; }}
     QPushButton:hover {{ border: 2px solid {c['accent']}; }}
-    QPushButton:focus, QLineEdit:focus, QComboBox:focus,
+    QPushButton:focus, QLineEdit:focus, QComboBox:focus, QDoubleSpinBox:focus,
+    QTableWidget:focus, QCheckBox:focus,
     QTextEdit:focus, QPlainTextEdit:focus {{
       border: 2px solid {c['accent']}; }}
     QPushButton:disabled {{ color: {c['muted']}; }}
+    QCheckBox {{ background-color: transparent; spacing: 7px; }}
+    QCheckBox::indicator {{ width: 17px; height: 17px;
+      background-color: {c['surface']}; border: 2px solid {c['border']};
+      border-radius: 4px; }}
+    QCheckBox::indicator:checked {{ background-color: {c['accent']};
+      border-color: {c['accent']}; }}
+    QCheckBox::indicator:focus {{ border: 2px solid {c['accent']}; }}
+    QTableCornerButton::section {{ background-color: {c['surface']};
+      border: 1px solid {c['border']}; }}
     QTabBar::tab {{ background-color: {c['surface']}; color: {c['text']};
       padding: 10px 16px; margin-right: 2px; }}
     QTabBar::tab:selected {{ border-bottom: 3px solid {c['accent']}; }}
