@@ -30,3 +30,15 @@ Nenhuma API externa paga é necessária nesta homologação.
 - A validação é executada ao clicar em Salvar, mantendo o diálogo aberto com os dados digitados quando o domínio ou a hierarquia rejeitam a alteração.
 - Caso o supervisor persistido não esteja disponível no workspace, o diálogo apresenta a referência ausente. Salvar mantendo-a selecionada é recusado sem fechar o formulário; selecionar **Sem supervisor** ou outro funcionário válido permite reparar o vínculo.
 - Os testes usam `objectName` estável nos widgets e cobrem persistência, cancelamento, validação, hierarquia cíclica e supervisor ausente.
+
+### V002-T03 — permissões visuais (em revisão)
+
+A aba Permissões usa um seletor de funcionários do workspace (nome e ID abreviado), no lugar da digitação manual do identificador. Quando o tipo de recurso é `directory`, o botão **Selecionar pasta…** abre o seletor nativo Qt e preenche o caminho. Para tipos Git, SSH, app e tool, mantém-se o campo de identificador, e o seletor de pastas fica desabilitado.
+
+A criação de grant exige seleção explícita de funcionário e continua submetida ao ResourceManager e à validação de permissões do core. Não há concessão automática. Testes: `tests/unit/test_v002_t03_visual_permissions.py`. Homologação manual Windows e CI ainda necessárias.
+
+#### Ajustes após revisão
+
+- A tabela de grants mostra o nome do funcionário e o identificador abreviado. O UUID integral permanece preservado no SQLite para operações de revogação e auditoria. Se o funcionário foi excluído, o texto **Funcionário ausente** explicita a referência órfã.
+- Mudar o tipo de recurso limpa o campo de caminho/identificador, impedindo reutilização acidental de uma pasta como identificador Git/SSH/app/tool. O botão de seleção de pasta permanece exclusivo de `directory`.
+- Testes de regressão garantem apresentação legível e bloqueio de concessão com locator vazio após a troca de tipo.

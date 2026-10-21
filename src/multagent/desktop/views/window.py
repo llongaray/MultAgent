@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from PySide6.QtCore import QObject, QThread, Signal, Slot
 from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow,
+    QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow,
     QMessageBox, QPlainTextEdit, QPushButton, QDoubleSpinBox,
     QTabWidget, QTableWidget, QTableWidgetItem, QTextEdit, QVBoxLayout, QWidget,
 )
@@ -284,6 +284,7 @@ class MainWindow(QMainWindow):
                         "Suspenso pela política"))
             for j, value in enumerate(columns):
                 self.agent_table.setItem(i, j, QTableWidgetItem(value))
+        self.refresh_permission_agents()
         if hasattr(self, "run_agent"):
             selected = self.run_agent.currentData()
             self.run_agent.clear()
@@ -332,13 +333,21 @@ class MainWindow(QMainWindow):
         self.resource_kind = QComboBox()
         self.resource_kind.addItems(["directory", "git", "ssh", "app", "tool"])
         self.resource_locator = QLineEdit()
-        self.principal_id = QLineEdit()
+        self.principal_agent = QComboBox()
+        self.principal_agent.setObjectName("permission_agent_selector")
+        self.resource_picker = QPushButton("Selecionar pasta…")
+        self.resource_picker.clicked.connect(self.choose_permission_directory)
+        self.resource_kind.currentTextChanged.connect(self._resource_kind_changed)
+        self._sync_resource_picker()
         self.permission_action = QComboBox()
         self.permission_action.addItems(["read", "write", "execute"])
         form = QFormLayout()
         form.addRow("Tipo de recurso", self.resource_kind)
-        form.addRow("Caminho / identificador", self.resource_locator)
-        form.addRow("ID do funcionário", self.principal_id)
+        locator_row = QHBoxLayout()
+        locator_row.addWidget(self.resource_locator)
+        locator_row.addWidget(self.resource_picker)
+        form.addRow("Caminho / identificador", locator_row)
+        form.addRow("Funcionário", self.principal_agent)
         form.addRow("Permissão", self.permission_action)
         layout.addLayout(form)
         button = QPushButton("Conceder permissão")
@@ -352,10 +361,41 @@ class MainWindow(QMainWindow):
         revoke_button.clicked.connect(self.revoke_permission)
         layout.addWidget(revoke_button)
         self.refresh_grants()
+        self.refresh_permission_agents()
+
+    def _resource_kind_changed(self, kind: str) -> None:
+        # A locator for one resource type must never be reused as another.
+        self.resource_locator.clear()
+        self._sync_resource_picker()
+
+    def _sync_resource_picker(self) -> None:
+        self.resource_picker.setEnabled(self.resource_kind.currentText() == "directory")
+
+    def choose_permission_directory(self) -> None:
+        if self.resource_kind.currentText() != "directory":
+            return
+        selected = QFileDialog.getExistingDirectory(self, "Selecionar pasta autorizada")
+        if selected:
+            self.resource_locator.setText(selected)
+
+    def refresh_permission_agents(self) -> None:
+        if not hasattr(self, "principal_agent"):
+            return
+        selected_id = self.principal_agent.currentData()
+        self.principal_agent.clear()
+        self.principal_agent.addItem("Selecione um funcionário", None)
+        for agent in self.registry.list(WORKSPACE):
+            self.principal_agent.addItem(agent.name + " (" + agent.id[:8] + ")", agent.id)
+        index = self.principal_agent.findData(selected_id)
+        if index >= 0:
+            self.principal_agent.setCurrentIndex(index)
 
     def grant_permission(self) -> None:
         try:
-            principal = self.registry.get(WORKSPACE, self.principal_id.text().strip())
+            agent_id = self.principal_agent.currentData()
+            if not agent_id:
+                raise ValueError("Selecione um funcionário")
+            principal = self.registry.get(WORKSPACE, agent_id)
             locator = self.resource_locator.text().strip()
             resource = Resource(str(uuid4()), WORKSPACE, self.resource_kind.currentText(), locator)
             self.resources.register(resource)
@@ -369,9 +409,16 @@ class MainWindow(QMainWindow):
 
     def refresh_grants(self) -> None:
         records = self.store.list("grant", WORKSPACE)
+        agents = {agent.id: agent.name for agent in self.registry.list(WORKSPACE)}
         self.grants_table.setRowCount(len(records))
         for i, record in enumerate(records):
-            columns = (record["id"], record["principal_id"], record["action"],
+            principal_id = record["principal_id"]
+            display_name = (
+                agents[principal_id] + " (" + principal_id[:8] + ")"
+                if principal_id in agents
+                else "Funcionário ausente (" + principal_id[:8] + ")"
+            )
+            columns = (record["id"], display_name, record["action"],
                        "Sim" if record["revoked"] else "Não")
             for j, value in enumerate(columns):
                 self.grants_table.setItem(i, j, QTableWidgetItem(value))
