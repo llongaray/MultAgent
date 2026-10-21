@@ -1,6 +1,8 @@
 """Centralized Qt palette and QSS with readable light/dark contrast."""
 from __future__ import annotations
 
+from pathlib import Path
+
 from PySide6.QtWidgets import QApplication
 
 THEMES = {
@@ -21,6 +23,7 @@ def stylesheet(theme: str) -> str:
     if theme not in THEMES:
         raise ValueError("Invalid Qt theme")
     c = THEMES[theme]
+    check_icon = (Path(__file__).parent / "assets" / f"check-{theme}.svg").as_posix()
     return f"""
     QWidget {{ background-color: {c['bg']}; color: {c['text']}; font-size: 13px; }}
     QMainWindow, QTabWidget::pane {{ background-color: {c['bg']}; }}
@@ -41,7 +44,7 @@ def stylesheet(theme: str) -> str:
       background-color: {c['surface']}; border: 2px solid {c['border']};
       border-radius: 4px; }}
     QCheckBox::indicator:checked {{ background-color: {c['accent']};
-      border-color: {c['accent']}; }}
+      border-color: {c['accent']}; image: url({check_icon}); }}
     QCheckBox::indicator:focus {{ border: 2px solid {c['accent']}; }}
     QTableCornerButton::section {{ background-color: {c['surface']};
       border: 1px solid {c['border']}; }}
