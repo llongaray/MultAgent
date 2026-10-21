@@ -104,20 +104,80 @@ def test_invalid_fields_keep_dialog_open_and_preserve_data(window, monkeypatch):
     assert window.registry.get(WORKSPACE, worker.id).name == "Original"
 
 
+def select_agent(window, agent_id):
+    window.refresh_agents()
+    for row in range(window.agent_table.rowCount()):
+        if window.agent_table.item(row, 0).text() == agent_id:
+            window.agent_table.selectRow(row)
+            return
+    raise AssertionError(f"Agent not found: {agent_id}")
+
+
 def test_cycle_rejected_without_closing_editor(window, monkeypatch):
     parent = add_agent(window, "Parent")
     child = add_agent(window, "Child")
-    # Simulate stale persisted data created by external/manual mutation.
-    record = window.store.get("agent", WORKSPACE, worker.id)
-    record["supervisor_id"] = "missing-supervisor"
-    window.store.put("agent", WORKSPACE, worker.id, record)
-    window.refresh_agents()
-    window.agent_table.selectRow(0)
-    alerts = []
-    monkeypatch.setattr(QMessageBox, "warning", lambda *args: alerts.append(args[2]))
+    window.registry.save(Agent(
+        child.id, WORKSPACE, child.name, child.provider, child.model,
+        supervisor_id=parent.id,
+    ))
+    select_agent(window, parent.id)
+    warnings = []
+    monkeypatch.setattr(QMessageBox, "warning", lambda *args: warnings.append(args[2]))
+
+    def attempt_cycle(dialog):
+        selector = field(dialog, "edit_agent_supervisor", QComboBox)
+        index = selector.findData(child.id)
+        assert index >= 0
+        selector.setCurrentIndex(index)
+        save(dialog)
+        assert warnings and "cycle" in warnings[0].lower()
+        assert dialog.result() != QDialog.DialogCode.Accepted
+        assert selector.currentData() == child.id
+        assert window.registry.get(WORKSPACE, parent.id).supervisor_id is None
+        assert window.registry.get(WORKSPACE, child.id).supervisor_id == parent.id
+        return QDialog.DialogCode.Rejected
+
+    monkeypatch.setattr(QDialog, "exec", attempt_cycle)
     window.edit_agent()
-    assert alerts and "supervisor" in alerts[0].lower()
-    assert window.registry.get(WORKSPACE, worker.id).supervisor_id == "missing-supervisor"
+    assert window.registry.get(WORKSPACE, parent.id).supervisor_id is None
+    assert window.registry.get(WORKSPACE, child.id).supervisor_id == parent.id
+
+
+@pytest.mark.parametrize("repair_to", [None, "valid"])
+def test_missing_supervisor_can_be_repaired_in_dialog(window, monkeypatch, repair_to):
+    worker = add_agent(window, "Orphan")
+    other = add_agent(window, "Replacement")
+    missing_id = "missing-supervisor"
+    record = window.store.get("agent", WORKSPACE, worker.id)
+    record["supervisor_id"] = missing_id
+    window.store.put("agent", WORKSPACE, worker.id, record)
+    select_agent(window, worker.id)
+    warnings = []
+    monkeypatch.setattr(QMessageBox, "warning", lambda *args: warnings.append(args[2]))
+
+    def attempt_repair(dialog):
+        selector = field(dialog, "edit_agent_supervisor", QComboBox)
+        assert selector.currentData() == missing_id
+        assert "ausente" in selector.currentText().lower()
+        save(dialog)
+        assert warnings and "ausente" in warnings[-1].lower()
+        assert dialog.result() != QDialog.DialogCode.Accepted
+        assert window.registry.get(WORKSPACE, worker.id).supervisor_id == missing_id
+
+        replacement = other.id if repair_to == "valid" else None
+        index = selector.findData(replacement)
+        assert index >= 0
+        selector.setCurrentIndex(index)
+        save(dialog)
+        assert dialog.result() == QDialog.DialogCode.Accepted
+        return dialog.result()
+
+    monkeypatch.setattr(QDialog, "exec", attempt_repair)
+    window.edit_agent()
+    assert window.registry.get(WORKSPACE, worker.id).supervisor_id == (
+        other.id if repair_to == "valid" else None
+    )
+    assert window.registry.get(WORKSPACE, other.id).supervisor_id is None
 
 
 def test_cancel_does_not_save(window, monkeypatch):
