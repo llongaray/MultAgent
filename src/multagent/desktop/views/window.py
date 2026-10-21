@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 
 from multagent import __version__
 from multagent.agents import AgentRegistry
+from multagent.desktop.theme import apply_theme
 from multagent.core.domain import Agent, PermissionGrant, Resource
 from multagent.core.router import Mode, Router, RoutingConfig
 from multagent.providers.deepseek import DeepSeekAdapter
@@ -71,6 +72,7 @@ class MainWindow(QMainWindow):
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
         self._build_home()
+        self.set_theme(self.theme_combo.currentText(), persist=False)
         self._build_agents()
         self._build_integrations()
         self._build_permissions()
@@ -104,10 +106,33 @@ class MainWindow(QMainWindow):
         self.mode_combo.setCurrentIndex(list(Mode).index(self.router.config.mode))
         button = QPushButton("Salvar modo global")
         button.clicked.connect(self.save_mode)
+        self.theme_combo = QComboBox()
+        self.theme_combo.setObjectName("desktop_theme")
+        self.theme_combo.addItems(["light", "dark"])
+        try:
+            saved_theme = self.store.get("settings", WORKSPACE, "appearance")["theme"]
+        except (KeyError, ValueError):
+            saved_theme = "light"
+        self.theme_combo.setCurrentText(saved_theme if saved_theme in {"light", "dark"} else "light")
+        self.theme_combo.currentTextChanged.connect(self.set_theme)
+        layout.addWidget(QLabel("Tema da interface"))
+        layout.addWidget(self.theme_combo)
         layout.addWidget(QLabel("Política de provedores"))
         layout.addWidget(self.mode_combo)
         layout.addWidget(button)
         layout.addStretch()
+
+    def set_theme(self, theme: str, persist: bool = True) -> None:
+        from PySide6.QtWidgets import QApplication
+
+        app = QApplication.instance()
+        if app is not None:
+            apply_theme(app, theme)
+        if persist:
+            self.store.put(
+                "settings", WORKSPACE, "appearance",
+                {"id": "appearance", "workspace_id": WORKSPACE, "theme": theme},
+            )
 
     def save_mode(self) -> None:
         mode = self.mode_combo.currentData()
