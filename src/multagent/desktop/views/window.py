@@ -337,7 +337,7 @@ class MainWindow(QMainWindow):
         self.principal_agent.setObjectName("permission_agent_selector")
         self.resource_picker = QPushButton("Selecionar pasta…")
         self.resource_picker.clicked.connect(self.choose_permission_directory)
-        self.resource_kind.currentTextChanged.connect(self._sync_resource_picker)
+        self.resource_kind.currentTextChanged.connect(self._resource_kind_changed)
         self._sync_resource_picker()
         self.permission_action = QComboBox()
         self.permission_action.addItems(["read", "write", "execute"])
@@ -362,6 +362,11 @@ class MainWindow(QMainWindow):
         layout.addWidget(revoke_button)
         self.refresh_grants()
         self.refresh_permission_agents()
+
+    def _resource_kind_changed(self, kind: str) -> None:
+        # A locator for one resource type must never be reused as another.
+        self.resource_locator.clear()
+        self._sync_resource_picker()
 
     def _sync_resource_picker(self) -> None:
         self.resource_picker.setEnabled(self.resource_kind.currentText() == "directory")
@@ -404,9 +409,16 @@ class MainWindow(QMainWindow):
 
     def refresh_grants(self) -> None:
         records = self.store.list("grant", WORKSPACE)
+        agents = {agent.id: agent.name for agent in self.registry.list(WORKSPACE)}
         self.grants_table.setRowCount(len(records))
         for i, record in enumerate(records):
-            columns = (record["id"], record["principal_id"], record["action"],
+            principal_id = record["principal_id"]
+            display_name = (
+                agents[principal_id] + " (" + principal_id[:8] + ")"
+                if principal_id in agents
+                else "Funcionário ausente (" + principal_id[:8] + ")"
+            )
+            columns = (record["id"], display_name, record["action"],
                        "Sim" if record["revoked"] else "Não")
             for j, value in enumerate(columns):
                 self.grants_table.setItem(i, j, QTableWidgetItem(value))
