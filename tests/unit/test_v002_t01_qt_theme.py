@@ -51,9 +51,9 @@ def test_control_boundary_contrast_and_focus_styles():
 
 
 def test_keyboard_navigation_and_checked_indicator(tmp_path):
-    from PySide6.QtWidgets import QPlainTextEdit, QTextEdit, QTableWidget
+    from PySide6.QtWidgets import QTextEdit
     from pathlib import Path
-    app = QApplication.instance() or QApplication([])
+    QApplication.instance() or QApplication([])
     window = MainWindow(tmp_path)
     assert window.run_prompt.tabChangesFocus()
     assert not window.agent_table.tabKeyNavigation()
