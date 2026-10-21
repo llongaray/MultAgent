@@ -23,3 +23,10 @@ Testes automatizados: `tests/unit/test_v002_t02_agent_edit.py` e `tests/unit/tes
 5. Confirmar que nenhum servidor HTTP é aberto no Desktop.
 
 Nenhuma API externa paga é necessária nesta homologação.
+
+### Correções de revisão da V002-T02
+
+- A coluna Estado distingue **Desativado** de **Suspenso pela política**. A lista de Execuções exibe o motivo e uma tentativa de iniciar um funcionário desativado é bloqueada com mensagem específica antes de qualquer chamada externa.
+- A validação é executada ao clicar em Salvar, mantendo o diálogo aberto com os dados digitados quando o domínio ou a hierarquia rejeitam a alteração.
+- Caso o supervisor persistido não esteja disponível no workspace, a edição é bloqueada com alerta em vez de converter silenciosamente a referência para `None`.
+- Os testes usam `objectName` estável nos widgets e cobrem persistência, cancelamento, validação, hierarquia cíclica e supervisor ausente.
