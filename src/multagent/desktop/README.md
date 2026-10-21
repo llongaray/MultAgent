@@ -2,22 +2,31 @@
 
 > [← Mapa Mestre](../../../org/README.md) · [↑ Pasta pai](../README.md) · [Guia técnico](../../../org/06-desenvolvimento/README.md)
 
-**Status: apenas arquivos Markdown; nenhuma funcionalidade implementada.**
+## Estado técnico
 
-## Propósito
+O Desktop PySide6 possui interface nativa para funcionários, integrações, permissões, execuções e auditoria. Não inicia serviço HTTP nem exige navegador.
 
-GUI nativa Windows 10/11, Ubuntu e Debian; dashboard, agentes e integrações.
+### V002-T02 — edição de funcionários
 
-## Componentes previstos
+A janela **Funcionários → Editar funcionário** permite alterar nome, cargo, provedor, modelo, supervisor, ativo/inativo e instruções. ID e workspace permanecem imutáveis. A escolha de supervisor é restrita a outros funcionários do workspace; o `AgentRegistry` rejeita hierarquias cíclicas. Cancelar não altera o registro; campos obrigatórios inválidos são rejeitados antes de persistir em SQLite. Uma edição aceita atualiza a tabela e mantém o funcionário selecionado.
 
-PySide6 / Qt Widgets; comunicação in-process com core.
+Testes automatizados: `tests/unit/test_v002_t02_agent_edit.py` e `tests/unit/test_p4_desktop.py`.
 
-## Restrições
+**Limites:** a interface não implementa ainda gerenciamento visual completo de equipes (V002-F07) ou seletores de grants (V002-T03). Testes unitários em Qt offscreen não substituem homologação manual no Windows 11.
 
-Não abrir porta HTTP, usar navegador como UI nem exigir admin.
+## Homologação no Windows
 
-## Validação futura
+1. Instalar dependências: `python -m pip install -e ".[desktop,dev]"`.
+2. Executar `python -m pytest -q tests/unit/test_v002_t02_agent_edit.py tests/unit/test_p4_desktop.py`.
+3. Abrir `multagent`; criar um funcionário, editar seus atributos, fechar e reabrir.
+4. Conferir persistência, cancelamento, validação de campos vazios, supervisor e estado ativo.
+5. Confirmar que nenhum servidor HTTP é aberto no Desktop.
 
-Abrir GUI e usar workers sem congelar janela.
+Nenhuma API externa paga é necessária nesta homologação.
 
-**Referências:** [Arquitetura Desktop e Server](../../../org/04-distribuicao/04-edicoes-desktop-server.md) · [Roadmap](../../../org/05-integracoes/05-caminho-de-implementacao.md).
+### Correções de revisão da V002-T02
+
+- A coluna Estado distingue **Desativado** de **Suspenso pela política**. A lista de Execuções exibe o motivo e uma tentativa de iniciar um funcionário desativado é bloqueada com mensagem específica antes de qualquer chamada externa.
+- A validação é executada ao clicar em Salvar, mantendo o diálogo aberto com os dados digitados quando o domínio ou a hierarquia rejeitam a alteração.
+- Caso o supervisor persistido não esteja disponível no workspace, o diálogo apresenta a referência ausente. Salvar mantendo-a selecionada é recusado sem fechar o formulário; selecionar **Sem supervisor** ou outro funcionário válido permite reparar o vínculo.
+- Os testes usam `objectName` estável nos widgets e cobrem persistência, cancelamento, validação, hierarquia cíclica e supervisor ausente.
