@@ -48,3 +48,34 @@ def test_control_boundary_contrast_and_focus_styles():
     ):
         assert token in stylesheet("dark")
         assert token in stylesheet("light")
+
+
+def test_keyboard_navigation_and_checked_indicator(tmp_path):
+    from PySide6.QtWidgets import QPlainTextEdit, QTextEdit, QTableWidget
+    from pathlib import Path
+    app = QApplication.instance() or QApplication([])
+    window = MainWindow(tmp_path)
+    assert window.run_prompt.tabChangesFocus()
+    assert not window.agent_table.tabKeyNavigation()
+    assert not window.grants_table.tabKeyNavigation()
+    # The editor instructions are constructed dynamically.
+    from PySide6.QtWidgets import QDialog
+    original_exec = QDialog.exec
+    def inspect_dialog(dialog):
+        instructions = dialog.findChild(QTextEdit, "edit_agent_instructions")
+        assert instructions is not None and instructions.tabChangesFocus()
+        return QDialog.DialogCode.Rejected
+    QDialog.exec = inspect_dialog
+    try:
+        window.agent_name.setText("Tester")
+        window.agent_model.setText("model")
+        window.add_agent()
+        window.agent_table.selectRow(0)
+        window.edit_agent()
+    finally:
+        QDialog.exec = original_exec
+        window.close()
+    for theme in ("light", "dark"):
+        css = stylesheet(theme)
+        assert "image: url(" in css
+        assert (Path(__file__).parents[2] / "src" / "multagent" / "desktop" / "assets" / f"check-{theme}.svg").is_file()
