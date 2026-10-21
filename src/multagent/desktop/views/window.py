@@ -6,9 +6,9 @@ from uuid import uuid4
 
 from PySide6.QtCore import QObject, QThread, Signal, Slot
 from PySide6.QtWidgets import (
-    QComboBox, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow, QInputDialog,
+    QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow,
     QMessageBox, QPlainTextEdit, QPushButton, QDoubleSpinBox,
-    QTabWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget,
+    QTabWidget, QTableWidget, QTableWidgetItem, QTextEdit, QVBoxLayout, QWidget,
 )
 
 from multagent import __version__
@@ -133,7 +133,7 @@ class MainWindow(QMainWindow):
         form.addRow("Modelo", self.agent_model)
         layout.addLayout(form)
         row = QHBoxLayout()
-        for label, fn in [("Adicionar funcionário", self.add_agent), ("Editar nome", self.edit_agent), ("Excluir selecionado", self.delete_agent)]:
+        for label, fn in [("Adicionar funcionário", self.add_agent), ("Editar funcionário", self.edit_agent), ("Excluir selecionado", self.delete_agent)]:
             btn = QPushButton(label)
             btn.clicked.connect(fn)
             row.addWidget(btn)
@@ -156,16 +156,78 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Funcionário inválido", str(exc))
 
     def edit_agent(self) -> None:
+        """Edit all supported agent attributes without changing its identity or workspace."""
         row = self.agent_table.currentRow()
         if row < 0:
+            self.statusBar().showMessage("Selecione um funcionário para editar")
             return
-        agent_id = self.agent_table.item(row, 0).text()
-        agent = self.registry.get(WORKSPACE, agent_id)
-        name, ok = QInputDialog.getText(self, "Editar funcionário", "Nome", text=agent.name)
-        if ok and name.strip():
-            agent.name = name.strip()
-            self.registry.save(agent)
-            self.refresh_agents()
+        item = self.agent_table.item(row, 0)
+        if item is None:
+            return
+        try:
+            agent = self.registry.get(WORKSPACE, item.text())
+        except (KeyError, ValueError, RuntimeError) as exc:
+            QMessageBox.warning(self, "Funcionário indisponível", str(exc))
+            return
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Editar funcionário")
+        form = QFormLayout(dialog)
+        name = QLineEdit(agent.name)
+        role = QLineEdit(agent.role)
+        provider = QComboBox()
+        provider.addItems(["deepseek", "grok"])
+        provider.setCurrentText(agent.provider)
+        model = QLineEdit(agent.model)
+        supervisor = QComboBox()
+        supervisor.addItem("Sem supervisor", None)
+        for colleague in self.registry.list(WORKSPACE):
+            if colleague.id != agent.id:
+                supervisor.addItem(colleague.name + " (" + colleague.id[:8] + ")", colleague.id)
+        supervisor.setCurrentIndex(max(0, supervisor.findData(agent.supervisor_id)))
+        enabled = QCheckBox("Funcionário ativo")
+        enabled.setChecked(agent.enabled)
+        instructions = QTextEdit()
+        instructions.setPlainText(agent.instructions)
+        instructions.setAcceptRichText(False)
+        form.addRow("Nome", name)
+        form.addRow("Cargo", role)
+        form.addRow("Provedor", provider)
+        form.addRow("Modelo", model)
+        form.addRow("Supervisor", supervisor)
+        form.addRow("Estado", enabled)
+        form.addRow("Instruções", instructions)
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel
+        )
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        form.addRow(buttons)
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+        try:
+            updated = Agent(
+                id=agent.id,
+                workspace_id=agent.workspace_id,
+                name=name.text().strip(),
+                provider=provider.currentText(),
+                model=model.text().strip(),
+                role=role.text().strip(),
+                supervisor_id=supervisor.currentData(),
+                enabled=enabled.isChecked(),
+                instructions=instructions.toPlainText(),
+            )
+            self.registry.save(updated)
+        except (KeyError, ValueError, RuntimeError) as exc:
+            QMessageBox.warning(self, "Alterações não salvas", str(exc))
+            return
+        self.refresh_agents()
+        for index in range(self.agent_table.rowCount()):
+            record = self.agent_table.item(index, 0)
+            if record is not None and record.text() == agent.id:
+                self.agent_table.selectRow(index)
+                break
+        self.statusBar().showMessage("Funcionário atualizado com sucesso")
 
     def delete_agent(self) -> None:
         row = self.agent_table.currentRow()
