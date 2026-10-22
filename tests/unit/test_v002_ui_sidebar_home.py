@@ -16,7 +16,7 @@ def test_sidebar_preserves_six_pages_and_navigation(tmp_path):
     app = QApplication.instance() or QApplication([])
     window = MainWindow(tmp_path)
     assert window.tabs.count() == 6
-    assert not window.tabs.tabBar().isVisible()
+    assert window.tabs.tabBar().isHidden()
     assert tuple(window.tabs.tabText(i) for i in range(6)) == tuple(
         label for label, _symbol in SECTIONS
     )
