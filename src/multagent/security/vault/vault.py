@@ -5,8 +5,8 @@ import base64
 import hashlib
 import json
 import os
-from pathlib import Path
 import secrets
+from pathlib import Path
 from typing import Protocol
 
 
@@ -58,6 +58,10 @@ class KeyringVault:
         self._ring.set_password(self._service, name, secret)
         return reference
 
+    def contains(self, reference: str) -> bool:
+        """Report presence without returning the secret."""
+        return self._ring.get_password(self._service, _parse_ref(reference)) is not None
+
     def get(self, reference: str) -> str:
         secret = self._ring.get_password(self._service, _parse_ref(reference))
         if secret is None:
@@ -75,8 +79,8 @@ class EncryptedFileVault:
         if not isinstance(password, str) or len(password) < 12:
             raise ValueError("Vault unlock password must have at least 12 characters")
         try:
-            from cryptography.hazmat.primitives.ciphers.aead import AESGCM
             from cryptography.exceptions import InvalidTag
+            from cryptography.hazmat.primitives.ciphers.aead import AESGCM
         except ImportError as exc:
             raise VaultUnavailable("Install the optional cryptography dependency") from exc
         self._aes = AESGCM
@@ -126,6 +130,9 @@ class EncryptedFileVault:
         self._values[name] = secret
         self._write()
         return reference
+
+    def contains(self, reference: str) -> bool:
+        return _parse_ref(reference) in self._values
 
     def get(self, reference: str) -> str:
         return self._values[_parse_ref(reference)]

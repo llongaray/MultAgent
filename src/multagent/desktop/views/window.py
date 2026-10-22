@@ -6,19 +6,42 @@ from uuid import uuid4
 
 from PySide6.QtCore import QObject, QThread, Signal, Slot
 from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-    QMessageBox, QPlainTextEdit, QPushButton, QDoubleSpinBox,
-    QTabWidget, QTableWidget, QTableWidgetItem, QTextEdit, QVBoxLayout, QWidget,
+    QCheckBox,
+    QComboBox,
+    QDialog,
+    QDialogButtonBox,
+    QDoubleSpinBox,
+    QFileDialog,
+    QFormLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QMessageBox,
+    QPlainTextEdit,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QTabWidget,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
 
 from multagent import __version__
 from multagent.agents import AgentRegistry
-from multagent.desktop.theme import apply_theme
 from multagent.core.domain import Agent, PermissionGrant, Resource
 from multagent.core.router import Mode, Router, RoutingConfig
+from multagent.desktop.theme import apply_theme
 from multagent.providers.deepseek import DeepSeekAdapter
 from multagent.providers.grok import GrokAdapter
 from multagent.resources import ResourceManager
+from multagent.security.credentials import (
+    CredentialRejected,
+    probe_stored_credential,
+    reference_for,
+    store_api_key,
+)
 from multagent.security.vault import KeyringVault, VaultUnavailable
 from multagent.storage.sqlite import SQLiteStore
 
@@ -67,6 +90,7 @@ class MainWindow(QMainWindow):
         self.registry = AgentRegistry(self.store, self.router)
         self.resources = ResourceManager(self.store)
         self._threads: list[tuple[QThread, RemoteWorker]] = []
+        self._credential_client_factory = None
         self.setWindowTitle("MultAgent Desktop — " + __version__)
         self.setMinimumSize(940, 640)
         self.tabs = QTabWidget()
@@ -333,29 +357,118 @@ class MainWindow(QMainWindow):
         page, layout = self._page("Integrações")
         layout.addWidget(QLabel("Credenciais somente no cofre do sistema operacional (nunca no SQLite)."))
         self.key_provider = QComboBox()
-        self.key_provider.addItems(["deepseek", "grok"])
+        self.key_provider.setObjectName("credential_provider")
+        self.key_provider.addItem("DeepSeek", "deepseek")
+        self.key_provider.addItem("Grok", "grok")
+        self.key_provider.currentIndexChanged.connect(self._credential_provider_changed)
+        self.credential_status = QLabel("Não configurada")
+        self.credential_status.setObjectName("credential_status")
         self.key_input = QLineEdit()
+        self.key_input.setObjectName("credential_secret")
         self.key_input.setEchoMode(QLineEdit.EchoMode.Password)
         self.key_input.setPlaceholderText("Cole a API key; o campo será limpo ao salvar")
         form = QFormLayout()
         form.addRow("Provedor", self.key_provider)
+        form.addRow("Situação", self.credential_status)
         form.addRow("API key", self.key_input)
         layout.addLayout(form)
-        button = QPushButton("Salvar no cofre seguro")
-        button.clicked.connect(self.save_credential)
-        layout.addWidget(button)
+        row = QHBoxLayout()
+        save_button = QPushButton("Salvar no cofre seguro")
+        save_button.setObjectName("credential_save")
+        save_button.clicked.connect(self.save_credential)
+        test_button = QPushButton("Testar credencial")
+        test_button.setObjectName("credential_test")
+        test_button.clicked.connect(self.test_credential)
+        remove_button = QPushButton("Remover do cofre")
+        remove_button.setObjectName("credential_remove")
+        remove_button.clicked.connect(self.remove_credential)
+        row.addWidget(save_button)
+        row.addWidget(test_button)
+        row.addWidget(remove_button)
+        layout.addLayout(row)
         layout.addStretch()
+        self._refresh_credential_status()
+
+    def _credential_vault(self) -> KeyringVault:
+        return KeyringVault()
+
+    def _credential_provider_changed(self, _index: int) -> None:
+        self.key_input.clear()
+        self._refresh_credential_status()
+
+    def _refresh_credential_status(self) -> None:
+        provider = str(self.key_provider.currentData() or "")
+        try:
+            configured = self._credential_vault().contains(reference_for(provider))
+        except (CredentialRejected, VaultUnavailable, RuntimeError, ValueError):
+            self.credential_status.setText("Cofre do sistema indisponível")
+            return
+        self.credential_status.setText(
+            "Configurada no cofre do sistema" if configured else "Não configurada"
+        )
 
     def save_credential(self) -> None:
+        secret = self.key_input.text()
+        provider = str(self.key_provider.currentData() or "")
         try:
-            vault = KeyringVault()
-            if not self.key_input.text():
-                raise ValueError("Informe uma API key")
-            vault.put(self.key_provider.currentText(), self.key_input.text())
-            self.key_input.clear()
-            self.statusBar().showMessage("Credencial salva no cofre do sistema")
-        except (VaultUnavailable, RuntimeError, ValueError) as exc:
-            QMessageBox.warning(self, "Cofre indisponível", str(exc))
+            vault = self._credential_vault()
+            ref = store_api_key(vault, provider, secret)
+            self.store.put("integration", WORKSPACE, provider, {
+                "id": provider, "workspace_id": WORKSPACE,
+                "provider": provider, "credential_ref": ref,
+            })
+        except (CredentialRejected, VaultUnavailable, RuntimeError, ValueError) as exc:
+            QMessageBox.warning(self, "Credencial não salva", str(exc))
+            return
+        self.key_input.clear()
+        self._refresh_credential_status()
+        self.statusBar().showMessage("Credencial salva no cofre do sistema")
+
+    def test_credential(self) -> None:
+        provider = str(self.key_provider.currentData() or "")
+        try:
+            vault = self._credential_vault()
+            if not vault.contains(reference_for(provider)):
+                raise CredentialRejected("Nenhuma credencial configurada para este provedor")
+            answer = QMessageBox.question(
+                self, "Testar credencial",
+                "A verificação consulta o provedor e não exibe a chave. Continuar?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
+            )
+            if answer != QMessageBox.StandardButton.Yes:
+                return
+            probe_stored_credential(
+                vault, provider, client_factory=self._credential_client_factory, approved_live=True,
+            )
+        except (CredentialRejected, VaultUnavailable, PermissionError, RuntimeError, ValueError) as exc:
+            QMessageBox.warning(self, "Credencial não confirmada", str(exc))
+            return
+        self.statusBar().showMessage("Credencial aceita pelo provedor. A chave não é exibida.")
+
+    def remove_credential(self) -> None:
+        provider = str(self.key_provider.currentData() or "")
+        try:
+            vault = self._credential_vault()
+            ref = reference_for(provider)
+            if not vault.contains(ref):
+                raise CredentialRejected("Nenhuma credencial configurada para este provedor")
+            answer = QMessageBox.question(
+                self, "Remover credencial",
+                "Remover a credencial deste provedor do cofre do sistema?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
+            )
+            if answer != QMessageBox.StandardButton.Yes:
+                return
+            vault.delete(ref)
+            self.store.delete("integration", WORKSPACE, provider)
+        except (CredentialRejected, VaultUnavailable, RuntimeError, ValueError) as exc:
+            QMessageBox.warning(self, "Credencial não removida", str(exc))
+            return
+        self.key_input.clear()
+        self._refresh_credential_status()
+        self.statusBar().showMessage("Credencial removida do cofre do sistema")
 
     def _build_permissions(self) -> None:
         page, layout = self._page("Permissões")
@@ -515,7 +628,7 @@ class MainWindow(QMainWindow):
             self.router.route(agent, input_tokens=max(100, len(prompt) // 2), output_tokens=4096)
             vault = KeyringVault()
             credential_ref = "vault:" + agent.provider
-            if not vault.get(credential_ref):
+            if not vault.contains(credential_ref):
                 raise ValueError("Configure a credencial do provedor")
             answer = QMessageBox.question(self, "Confirmar custo de API",
                 "Esta operação enviará sua tarefa ao provedor e poderá gerar cobrança. Autoriza a execução?",

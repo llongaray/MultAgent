@@ -62,3 +62,7 @@ A aba Início contém um seletor de tema claro/escuro. Tokens e QSS centralizado
 - Tabelas de Funcionários e Permissões usam `setTabKeyNavigation(False)`, evitando foco circular entre células. Navegação interna por setas permanece disponível.
 - Checkbox selecionado inclui um visto vetorial explícito, com variantes para contraste em Claro e Escuro, empacotadas com a aplicação.
 - Cobertura de regressão em `tests/unit/test_v002_t01_qt_theme.py`; homologação manual final de teclado/Windows permanece necessária.
+
+### V002-T04 — chaves de API
+
+A aba **Integrações** configura DeepSeek e Grok no cofre do sistema. A chave digitada usa campo de senha, é validada antes de gravar e é apagada do formulário ao salvar ou ao trocar de provedor. O SQLite guarda só `credential_ref` (`vault:deepseek` ou `vault:grok`). A situação mostra se a credencial existe, sem o segredo. **Testar credencial** consulta o provedor somente depois de confirmação e apresenta falha sem o corpo da resposta. **Remover do cofre** apaga a entrada e a referência. Testes: `tests/unit/test_v002_t04_api_keys.py`.
