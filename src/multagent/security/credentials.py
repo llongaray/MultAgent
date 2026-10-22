@@ -66,7 +66,7 @@ def probe_stored_credential(
         )
     except ProviderError:
         raise
-    except (OSError, ValueError, KeyError, TypeError, TimeoutError, ConnectionError) as exc:
-        raise ProviderError("Falha ao validar a credencial") from exc
+    except Exception:  # noqa: BLE001 - the original error may contain the API key
+        raise ProviderError("Falha ao validar a credencial") from None
     if not found:
         raise ProviderError("O provedor não confirmou a credencial")

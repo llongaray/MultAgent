@@ -162,6 +162,25 @@ def test_rejected_probe_hides_the_provider_error_body(desktop, monkeypatch):
     assert SECRET not in warnings[-1]
 
 
+def test_unexpected_probe_failure_does_not_reveal_the_secret(desktop, monkeypatch):
+    window, _vault = desktop
+
+    class LeakyClient(ProbeClient):
+        def request(self, method: str, url: str, headers: dict[str, str] | None = None, json: object = None) -> object:
+            del method, url, headers, json
+            raise RuntimeError("Authorization: Bearer " + SECRET)
+
+    window._credential_client_factory = lambda timeout=30: LeakyClient()
+    warnings: list[str] = []
+    monkeypatch.setattr(QMessageBox, "warning", lambda *args: warnings.append(str(args[2])))
+    monkeypatch.setattr(QMessageBox, "question", lambda *args: QMessageBox.StandardButton.Yes)
+    window.key_input.setText(SECRET)
+    window.save_credential()
+    window.test_credential()
+    assert warnings == ["Falha ao validar a credencial"]
+    assert SECRET not in warnings[-1]
+
+
 def test_remove_deletes_vault_entry_and_reference(desktop, tmp_path, monkeypatch):
     window, vault = desktop
     monkeypatch.setattr(QMessageBox, "question", lambda *args: QMessageBox.StandardButton.Yes)
