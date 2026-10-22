@@ -62,3 +62,11 @@ A aba Início contém um seletor de tema claro/escuro. Tokens e QSS centralizado
 - Tabelas de Funcionários e Permissões usam `setTabKeyNavigation(False)`, evitando foco circular entre células. Navegação interna por setas permanece disponível.
 - Checkbox selecionado inclui um visto vetorial explícito, com variantes para contraste em Claro e Escuro, empacotadas com a aplicação.
 - Cobertura de regressão em `tests/unit/test_v002_t01_qt_theme.py`; homologação manual final de teclado/Windows permanece necessária.
+
+### V002 — Shell visual nativo (menu lateral + Início)
+
+Primeira fase do redesign, iniciada a partir de `dev`, sem alteração do core nem dos fluxos de cofre/API. A navegação usa uma sidebar fixa azul-marinho `#061D40` com seis seções. O `QTabWidget` permanece como contêiner interno para preservar widgets e testes existentes, mas a barra de abas é ocultada; a sidebar seleciona a página correspondente e mantém um único item ativo.
+
+A tela Início foi refeita com banner, configuração global, indicadores de estado e três cartões informativos. A preferência claro/escuro, a política de provedores e o botão **Salvar modo global** continuam usando os mecanismos existentes. O conteúdo inicial usa `QScrollArea` para não ser cortado em alturas menores. A apresentação é isolada em `desktop/views/shell.py` e as regras de aparência no QSS.
+
+Validação: `python -m pytest -q tests/unit/test_v002_ui_sidebar_home.py tests/unit/test_p4_desktop.py`. A homologação gráfica no Windows e comparação com a imagem de referência seguem pendentes; os indicadores da home descrevem capacidades arquiteturais, não verificações de integridade em tempo real.
