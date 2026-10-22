@@ -8,8 +8,9 @@ pytest.importorskip("PySide6")
 
 from PySide6.QtWidgets import QApplication, QFrame, QPushButton
 
+from multagent.core.router import Mode
 from multagent.desktop.views.shell import SECTIONS
-from multagent.desktop.views.window import MainWindow, WORKSPACE
+from multagent.desktop.views.window import WORKSPACE, MainWindow
 
 
 def test_sidebar_preserves_six_pages_and_navigation(tmp_path):
@@ -42,8 +43,7 @@ def test_dashboard_preserves_settings_and_has_cards(tmp_path):
     assert window.store.get("settings", WORKSPACE, "appearance")["theme"] == "dark"
     window.mode_combo.setCurrentIndex(0)
     window.save_mode()
-    assert window.store.get("settings", WORKSPACE, "routing")["mode"] == (
-        window.mode_combo.currentData().value
-    )
+    assert window.store.get("settings", WORKSPACE, "routing")["mode"] == "deepseek_only"
+    assert window.router.config.mode == Mode.DEEPSEEK_ONLY
     window.close()
     assert app is not None

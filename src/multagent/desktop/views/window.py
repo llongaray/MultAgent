@@ -6,17 +6,35 @@ from uuid import uuid4
 
 from PySide6.QtCore import QObject, QThread, Signal, Slot
 from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-    QMessageBox, QPlainTextEdit, QPushButton, QDoubleSpinBox,
-    QTabWidget, QTableWidget, QTableWidgetItem, QTextEdit, QVBoxLayout, QWidget,
+    QCheckBox,
+    QComboBox,
+    QDialog,
+    QDialogButtonBox,
+    QDoubleSpinBox,
+    QFileDialog,
+    QFormLayout,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QMessageBox,
+    QPlainTextEdit,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QTabWidget,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
 
 from multagent import __version__
 from multagent.agents import AgentRegistry
-from multagent.desktop.theme import apply_theme
-from multagent.desktop.views.shell import sidebar, card, status_row, dashboard_scroller
 from multagent.core.domain import Agent, PermissionGrant, Resource
 from multagent.core.router import Mode, Router, RoutingConfig
+from multagent.desktop.theme import apply_theme
+from multagent.desktop.views.shell import card, dashboard_scroller, sidebar, status_row
 from multagent.providers.deepseek import DeepSeekAdapter
 from multagent.providers.grok import GrokAdapter
 from multagent.resources import ResourceManager
@@ -232,7 +250,8 @@ class MainWindow(QMainWindow):
             )
 
     def save_mode(self) -> None:
-        mode = self.mode_combo.currentData()
+        selected = self.mode_combo.currentData()
+        mode = selected if isinstance(selected, Mode) else Mode(selected)
         self.router.config.mode = mode
         self.router.config.enabled = self._enabled_for_mode(mode)
         self.store.put("settings", WORKSPACE, "routing", {"id": "routing", "workspace_id": WORKSPACE, "mode": mode.value})
