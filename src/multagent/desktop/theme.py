@@ -26,6 +26,43 @@ def stylesheet(theme: str) -> str:
     check_icon = (Path(__file__).parent / "assets" / f"check-{theme}.svg").as_posix()
     return f"""
     QWidget {{ background-color: {c['bg']}; color: {c['text']}; font-size: 13px; }}
+    #applicationShell, #dashboardContent, #dashboardScroll {{
+      background-color: {c['bg']}; }}
+    #sidebar {{ background-color: #061D40; border: none; }}
+    #sidebarBrand {{ background: transparent; color: #f2f7ff;
+      font-size: 22px; font-weight: 800; }}
+    #sidebarHint {{ background: transparent; color: #9dbce9;
+      font-size: 12px; }}
+    #sidebarDivider {{ background-color: #42628a; border: none; max-height: 1px; }}
+    QPushButton#sidebarNavigation {{ background: transparent; color: #d7e6fc;
+      text-align: left; border: none; padding: 13px 12px;
+      font-size: 14px; border-radius: 8px; }}
+    QPushButton#sidebarNavigation:hover {{ background-color: #103c75; }}
+    QPushButton#sidebarNavigation:checked {{ background-color: #0869EF;
+      color: #ffffff; border-left: 4px solid #64d3ff; font-weight: 700; }}
+    QPushButton#sidebarNavigation:focus {{ border: 2px solid #FFC340; }}
+    #dashboardHero {{ background-color: #061D40; border: 1px solid #17539c;
+      border-radius: 14px; min-height: 190px; }}
+    #heroKicker {{ color: #FFC340; background: transparent;
+      font-size: 12px; font-weight: 700; }}
+    #heroTitle {{ color: #ffffff; background: transparent;
+      font-size: 42px; font-weight: 800; }}
+    #heroSubtitle {{ color: #ffffff; background: transparent; font-size: 18px; }}
+    #heroNote {{ color: #b9cff0; background: transparent; font-size: 13px; }}
+    #dashboardCard {{ background-color: {c['surface']}; border: 1px solid {c['border']};
+      border-radius: 12px; }}
+    #cardHeading {{ background: transparent; color: {c['text']};
+      font-size: 19px; font-weight: 700; }}
+    #cardNote {{ background: transparent; color: {c['muted']}; font-size: 12px; }}
+    #statusRow {{ background-color: {c['bg']}; border-radius: 9px; }}
+    #statusTitle {{ background: transparent; font-weight: 700; }}
+    #statusBadge {{ background-color: #c9f2db; color: #074b31;
+      border-radius: 12px; padding: 5px 11px; font-weight: 700; }}
+    QPushButton#primaryAction {{ background-color: #0869EF; color: #ffffff;
+      border: 2px solid #0869EF; font-size: 15px; font-weight: 700;
+      min-height: 36px; }}
+    QPushButton#primaryAction:hover {{ background-color: #0758ca; }}
+    QPushButton#primaryAction:focus {{ border: 3px solid #FFC340; }}
     QMainWindow, QTabWidget::pane {{ background-color: {c['bg']}; }}
     QLabel {{ background: transparent; }}
     QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QDoubleSpinBox,
