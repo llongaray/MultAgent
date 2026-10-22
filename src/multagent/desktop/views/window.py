@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 from multagent import __version__
 from multagent.agents import AgentRegistry
 from multagent.desktop.theme import apply_theme
+from multagent.desktop.views.shell import sidebar, card, status_row, dashboard_scroller
 from multagent.core.domain import Agent, PermissionGrant, Resource
 from multagent.core.router import Mode, Router, RoutingConfig
 from multagent.providers.deepseek import DeepSeekAdapter
@@ -69,8 +70,17 @@ class MainWindow(QMainWindow):
         self._threads: list[tuple[QThread, RemoteWorker]] = []
         self.setWindowTitle("MultAgent Desktop — " + __version__)
         self.setMinimumSize(940, 640)
+        shell = QWidget()
+        shell.setObjectName("applicationShell")
+        shell_layout = QHBoxLayout(shell)
+        shell_layout.setContentsMargins(0, 0, 0, 0)
+        shell_layout.setSpacing(0)
+        navigation, self.nav_buttons = sidebar(self.navigate)
+        shell_layout.addWidget(navigation)
         self.tabs = QTabWidget()
-        self.setCentralWidget(self.tabs)
+        self.tabs.tabBar().hide()
+        shell_layout.addWidget(self.tabs, 1)
+        self.setCentralWidget(shell)
         self._build_home()
         self.set_theme(self.theme_combo.currentData(), persist=False)
         self._build_agents()
@@ -80,7 +90,17 @@ class MainWindow(QMainWindow):
         self._build_logs()
         self.refresh_agents()
         self.refresh_audit()
+        self.tabs.currentChanged.connect(self._sync_navigation)
+        self.navigate(0)
         self.statusBar().showMessage("Desktop Qt nativo • sem porta HTTP • dados locais")
+
+    def navigate(self, index: int) -> None:
+        self.tabs.setCurrentIndex(index)
+        self._sync_navigation(index)
+
+    def _sync_navigation(self, index: int) -> None:
+        for item_index, button in enumerate(self.nav_buttons):
+            button.setChecked(item_index == index)
 
     @staticmethod
     def _enabled_for_mode(mode: Mode) -> set[str]:
@@ -98,14 +118,39 @@ class MainWindow(QMainWindow):
 
     def _build_home(self) -> None:
         page, layout = self._page("Início")
-        layout.addWidget(QLabel("MultAgent: funcionários de IA, integrações e execuções locais."))
-        layout.addWidget(QLabel("Sem servidor HTTP ou navegador. O consumo das APIs é opt-in."))
-        self.mode_combo = QComboBox()
-        for mode in Mode:
-            self.mode_combo.addItem(mode.value, mode)
-        self.mode_combo.setCurrentIndex(list(Mode).index(self.router.config.mode))
-        button = QPushButton("Salvar modo global")
-        button.clicked.connect(self.save_mode)
+        layout.setContentsMargins(0, 0, 0, 0)
+        scroll, content = dashboard_scroller()
+        layout.addWidget(scroll)
+
+        hero = QFrame()
+        hero.setObjectName("dashboardHero")
+        hero_layout = QVBoxLayout(hero)
+        hero_layout.setContentsMargins(30, 23, 30, 24)
+        hero_layout.setSpacing(10)
+        kicker = QLabel("━━━━━━━━  MULTAGENT DESKTOP")
+        kicker.setObjectName("heroKicker")
+        hero_layout.addWidget(kicker)
+        headline = QLabel("MultAgent")
+        headline.setObjectName("heroTitle")
+        hero_layout.addWidget(headline)
+        desc = QLabel("Funcionários de IA, integrações e execuções locais.")
+        desc.setObjectName("heroSubtitle")
+        desc.setWordWrap(True)
+        hero_layout.addWidget(desc)
+        note = QLabel("Sem servidor HTTP ou navegador. O consumo das APIs é opt-in.")
+        note.setObjectName("heroNote")
+        note.setWordWrap(True)
+        hero_layout.addWidget(note)
+        content.addWidget(hero)
+
+        main_row = QHBoxLayout()
+        main_row.setSpacing(14)
+        config, config_layout = card(
+            "⚙  Configuração global",
+            "Defina as preferências aplicadas em todo o aplicativo.",
+        )
+        config_layout.addSpacing(5)
+        config_layout.addWidget(QLabel("Tema da interface"))
         self.theme_combo = QComboBox()
         self.theme_combo.setObjectName("desktop_theme")
         self.theme_combo.addItem("Claro", "light")
@@ -118,12 +163,61 @@ class MainWindow(QMainWindow):
         self.theme_combo.currentIndexChanged.connect(
             lambda _index: self.set_theme(self.theme_combo.currentData())
         )
-        layout.addWidget(QLabel("Tema da interface"))
-        layout.addWidget(self.theme_combo)
-        layout.addWidget(QLabel("Política de provedores"))
-        layout.addWidget(self.mode_combo)
-        layout.addWidget(button)
-        layout.addStretch()
+        config_layout.addWidget(self.theme_combo)
+        theme_hint = QLabel("Escolha o tema visual da aplicação.")
+        theme_hint.setObjectName("cardNote")
+        config_layout.addWidget(theme_hint)
+        config_layout.addSpacing(8)
+        config_layout.addWidget(QLabel("Política de provedores"))
+        self.mode_combo = QComboBox()
+        for mode in Mode:
+            self.mode_combo.addItem(mode.value, mode)
+        self.mode_combo.setCurrentIndex(list(Mode).index(self.router.config.mode))
+        config_layout.addWidget(self.mode_combo)
+        policy_hint = QLabel("Defina quais provedores de IA podem ser utilizados.")
+        policy_hint.setObjectName("cardNote")
+        config_layout.addWidget(policy_hint)
+        config_layout.addStretch()
+        save = QPushButton("▣   Salvar modo global")
+        save.setObjectName("primaryAction")
+        save.clicked.connect(self.save_mode)
+        config_layout.addWidget(save)
+        main_row.addWidget(config, 1)
+
+        health, health_layout = card("⌁  Estado do sistema")
+        health_layout.addWidget(
+            status_row("Estado do sistema", "MultAgent funcionando em modo local.", "Pronto")
+        )
+        health_layout.addWidget(
+            status_row("Desktop Qt nativo", "Aplicação de desktop multiplataforma.", "Ativo")
+        )
+        health_layout.addWidget(
+            status_row("Sem porta HTTP", "Não utiliza servidor HTTP nem navegador.", "Ativo")
+        )
+        health_layout.addWidget(
+            status_row("Dados locais", "Dados armazenados localmente.", "Ativo")
+        )
+        health_layout.addWidget(
+            status_row("Execuções locais", "Agentes executam em seu ambiente.", "Disponível")
+        )
+        health_layout.addWidget(
+            status_row("APIs opt-in", "Consumo somente com sua autorização.", "Seguro")
+        )
+        health_layout.addStretch()
+        main_row.addWidget(health, 1)
+        content.addLayout(main_row)
+
+        footer = QHBoxLayout()
+        footer.setSpacing(14)
+        for heading, description in (
+            ("Desktop Qt nativo", "Aplicação multiplataforma para Windows e Linux."),
+            ("Sem porta HTTP", "Sem servidor HTTP ou navegador."),
+            ("Dados locais", "Suas configurações e dados no seu ambiente."),
+        ):
+            info, _layout = card(heading, description)
+            footer.addWidget(info, 1)
+        content.addLayout(footer)
+        content.addStretch()
 
     def set_theme(self, theme: str, persist: bool = True) -> None:
         from PySide6.QtWidgets import QApplication
